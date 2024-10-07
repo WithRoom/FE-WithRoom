@@ -5,6 +5,10 @@ import Swal from 'sweetalert2';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Redirection = () => {
+    const api = axios.create({
+        baseURL: 'https://studywithme.store', 
+      });
+
     const code = new URLSearchParams(window.location.search).get('code');
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -13,8 +17,10 @@ const Redirection = () => {
         let isMounted = true; 
 
         const loginUser = async () => {
+            console.log('code:', code);
+
             try {
-                const result = await axios.post('/oauth/kakao/login', { code });
+                 const result = await api.post('/oauth/kakao/login', { code }); 
                 const { accessToken, expiresIn } = result.data;
 
                 if (isMounted) {
@@ -50,7 +56,7 @@ const Redirection = () => {
                 const accessToken = localStorage.getItem('accessToken');
                 const expireTime = localStorage.getItem('tokenExpiration');
 
-                const response = await axios.post('/oauth/kakao/reissue', {
+                const response = await api.post('https://studywithme.store/oauth/kakao/reissue', {
                     grantType: 'Bearer', // grantType 설정
                     accessToken: accessToken,
                     expireTime: expireTime,
