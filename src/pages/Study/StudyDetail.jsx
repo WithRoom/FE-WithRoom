@@ -59,7 +59,7 @@ const StudyDetail = () => {
       }
 
       try {
-        const response = await axios.api(process.env.REACT_APP_DOMAIN + '/study/info/detail', { studyId }, {
+        const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/info/detail', { studyId }, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
         setStudyDetail(response.data.studyDetail);
@@ -121,7 +121,7 @@ const StudyDetail = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.api(process.env.REACT_APP_DOMAIN + '/comment/delete', { commentId }, {
+      await api.post(process.env.REACT_APP_DOMAIN + '/comment/delete', { commentId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
