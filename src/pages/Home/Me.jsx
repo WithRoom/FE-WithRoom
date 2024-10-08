@@ -7,6 +7,10 @@ import { Container, Row, Col } from "react-bootstrap";
 import '../css/ProfileCard.css';
 
 const Me = () => {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_DOMAIN,
+  });
+
   const [userProfile, setUserProfile] = useState({
     name: "",
     preferredLocation: "",
@@ -16,7 +20,7 @@ const Me = () => {
   const token = localStorage.getItem('accessToken');
 
   useEffect(() => {
-    axios.get('/member/mypage/info', {
+    api.get(process.env.REACT_APP_DOMAIN + '/member/mypage/info', {
       headers: { 
         Authorization: `Bearer ${token}`
       }
