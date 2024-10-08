@@ -201,10 +201,10 @@ function getErrorMessage(error) {
 
 async function saveUser(url, json, token) {
   const api = axios.create({
-    baseURL: 'https://studywithme.store', 
+    baseURL: process.env.REACT_APP_DOMAIN, 
   });
 
-  const response = await axios.post(url, json, {
+  const response = await api.post(url, json, {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
       'Authorization': `Bearer ${token}`

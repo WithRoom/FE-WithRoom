@@ -8,7 +8,7 @@ import { StudyContext } from './StudyContext';
 
 const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
   const api = axios.create({
-    baseURL: 'https://studywithme.store', 
+    baseURL: process.env.REACT_APP_DOMAIN, 
   });
 
   console.log(isLiked, setIsLiked, studyId);
@@ -17,7 +17,7 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
 
   const handleLikeClick = () => {
     api
-      .get("/study/mypage/info/mystudy", {
+      .get(process.env.REACT_APP_DOMAIN + "/study/mypage/info/mystudy", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       })
       .then((response) => {
@@ -35,7 +35,7 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
   
         // 그룹장이 아닐 경우 관심 등록/취소 로직 진행
         api
-          .post("/study/interest", { studyId }, {
+          .post(process.env.REACT_APP_DOMAIN + "/study/interest", { studyId }, {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
           })
           .then((response) => {
@@ -133,14 +133,14 @@ const RecruitmentInfo = ({ nowPeople, recruitPeople }) => (
 
 const ActionButton = ({ state, studyId }) => {
   const api = axios.create({
-    baseURL: 'https://studywithme.store', 
+    baseURL: process.env.REACT_APP_DOMAIN, 
   });
 
   console.log(state, studyId);
 
   const studyJoin = async () => {
     try {
-      const response = await api.post('/study/join', { studyId },
+      const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/join', { studyId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -178,13 +178,13 @@ const ActionButton = ({ state, studyId }) => {
 
 const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
   const api = axios.create({
-    baseURL: 'https://studywithme.store', 
+    baseURL: process.env.REACT_APP_DOMAIN, 
   });
 
 
   const handleAccept = async () => {
     try {
-      await api.post('/study/response-join', { state: true, studyId, memberId },
+      await api.post(process.env.REACT_APP_DOMAIN + '/study/response-join', { state: true, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -210,11 +210,11 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
 
   const handleReject = async () => {
     const api = axios.create({
-      baseURL: 'https://studywithme.store', 
+      baseURL: process.env.REACT_APP_DOMAIN, 
     });
 
     try {
-      await api.post('/study/response-join', { state: false, studyId, memberId },
+      await api.post(process.env.REACT_APP_DOMAIN + '/study/response-join', { state: false, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       Swal.fire({

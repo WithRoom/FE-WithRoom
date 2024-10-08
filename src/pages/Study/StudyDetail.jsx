@@ -48,7 +48,7 @@ const StudyDetail = () => {
   const [isPrivate, setIsPrivate] = useState(false);
 
   const api = axios.create({
-    baseURL: 'https://studywithme.store', 
+    baseURL: process.env.REACT_APP_DOMAIN, 
   });
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const StudyDetail = () => {
       }
 
       try {
-        const response = await axios.api('/study/info/detail', { studyId }, {
+        const response = await axios.api(process.env.REACT_APP_DOMAIN + '/study/info/detail', { studyId }, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
         setStudyDetail(response.data.studyDetail);
@@ -90,7 +90,7 @@ const StudyDetail = () => {
     }
   
     try {
-      await api.post('/comment/create', {
+      await api.post(process.env.REACT_APP_DOMAIN + '/comment/create', {
         studyId,
         content: newComment,
         isPrivate,
@@ -121,7 +121,7 @@ const StudyDetail = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.api('/comment/delete', { commentId }, {
+      await axios.api(process.env.REACT_APP_DOMAIN + '/comment/delete', { commentId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -147,7 +147,7 @@ const StudyDetail = () => {
 
   const handleFinishStudy = async () => {
     try {
-      const response = await api.post('/study/finish', { studyId }, {
+      const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/finish', { studyId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 

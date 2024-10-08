@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Redirection = () => {
     const api = axios.create({
-        baseURL: 'https://studywithme.store', 
+        baseURL: process.env.REACT_APP_DOMAIN, 
       });
 
     const code = new URLSearchParams(window.location.search).get('code');
@@ -20,7 +20,7 @@ const Redirection = () => {
             console.log('code:', code);
 
             try {
-                 const result = await axios.post('/oauth/kakao/login', { code }); 
+                 const result = await api.post(process.env.REACT_APP_DOMAIN +'/oauth/kakao/login', { code }); 
                 const { accessToken, expiresIn } = result.data;
 
                 if (isMounted) {
@@ -56,7 +56,7 @@ const Redirection = () => {
                 const accessToken = localStorage.getItem('accessToken');
                 const expireTime = localStorage.getItem('tokenExpiration');
 
-                const response = await axios.post('https://studywithme.store/oauth/kakao/reissue', {
+                const response = await api.post(process.env.REACT_APP_DOMAIN + '/oauth/kakao/reissue', {
                     grantType: 'Bearer', // grantType 설정
                     accessToken: accessToken,
                     expireTime: expireTime,

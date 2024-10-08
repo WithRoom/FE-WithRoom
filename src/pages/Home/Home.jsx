@@ -15,7 +15,7 @@ import { ChevronRight } from 'lucide-react';
 
 const Home = () => {
   const api = axios.create({
-    baseURL: 'https://studywithme.store',
+    baseURL: process.env.REACT_APP_DOMAIN,
   });
 
   const [nickName, setNickName] = useState(null);
@@ -26,7 +26,7 @@ const Home = () => {
   const checkAuth = async () => {
     try {
       const checkToken = localStorage.getItem('accessToken');
-      const response = await api.get('/oauth/login/state', {
+      const response = await api.get(process.env.REACT_APP_DOMAIN + '/oauth/login/state', {
         headers: { Authorization: `Bearer ${checkToken}` },
       });
       setIsAuthenticated(response.data.state);  // state가 false일 경우도 처리
@@ -39,7 +39,7 @@ const Home = () => {
   // 사용자 정보 가져오기
   const fetchMemberInfo = async (token) => {
     try {
-      const response = await api.get('/member/mypage/info', {
+      const response = await api.get(process.env.REACT_APP_DOMAIN +'/member/mypage/info', {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('memberInfo', response.data);
@@ -52,7 +52,7 @@ const Home = () => {
   // 스터디 목록 가져오기
   const fetchStudies = async () => {
     try {
-      const response = await api.get('/home/info', {
+      const response = await api.get(process.env.REACT_APP_DOMAIN + '/home/info', {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       console.log('studies', response.data);

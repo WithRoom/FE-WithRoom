@@ -8,7 +8,7 @@ import noSearchImg from '../../images/nosearch.png';
 
 const StudyList = () => {
   const api = axios.create({
-    baseURL: 'https://studywithme.store', 
+    baseURL: process.env.REACT_APP_DOMAIN, 
   });
 
   const [allStudies, setAllStudies] = useState([]);
@@ -22,7 +22,7 @@ const StudyList = () => {
 
   const fetchAllStudies = async () => {
     try {
-      const response = await api.get('/home/info', {
+      const response = await api.get(process.env.REACT_APP_DOMAIN + '/home/info', {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       setAllStudies(response.data.homeStudyInfoList);
