@@ -12,6 +12,10 @@ import SwiperComponent from './SwiperComponent';
 import '../css/Header.css';
 
 const Header = () => {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_DOMAIN,
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
@@ -48,7 +52,7 @@ const Header = () => {
   const search = () => {
     console.log(searchQuery);
 
-    axios.post(`/study/search`, { search: searchQuery })
+    api.post(`/study/search`, { search: searchQuery })
       .then((response) => {
         console.log(response);
         setSearchQuery(''); // 검색 완료 후 검색어 초기화
@@ -68,7 +72,9 @@ const Header = () => {
 
   // 로그아웃 기능
   const logout = () => {
-    axios.post(`/oauth/kakao/logout`, {}, {
+    const domain = process.env.REACT_APP_DOMAIN;
+
+    api.post(`${domain}/oauth/kakao/logout`, {}, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
