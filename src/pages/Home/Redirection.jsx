@@ -7,8 +7,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const Redirection = () => {
     const api = axios.create({
         baseURL: process.env.REACT_APP_DOMAIN, 
-      });
+    });
 
+    const domain = process.env.REACT_APP_DOMAIN; // domain 변수 추출
     const code = new URLSearchParams(window.location.search).get('code');
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -20,12 +21,12 @@ const Redirection = () => {
             console.log('code:', code);
 
             try {
-                 const result = await api.post(process.env.REACT_APP_DOMAIN +'/oauth/kakao/login', { code }); 
+                const result = await api.post(`${domain}/oauth/kakao/login`, { code });
                 const { accessToken, expiresIn } = result.data;
 
                 if (isMounted) {
                     localStorage.setItem('accessToken', accessToken);
-                    localStorage.setItem('tokenExpiration', Date.now() + expiresIn * 1000); 
+                    localStorage.setItem('tokenExpiration', Date.now() + expiresIn * 1000);
 
                     if (result.data.firstJoin) {
                         Swal.fire({
@@ -56,8 +57,8 @@ const Redirection = () => {
                 const accessToken = localStorage.getItem('accessToken');
                 const expireTime = localStorage.getItem('tokenExpiration');
 
-                const response = await api.post(process.env.REACT_APP_DOMAIN + '/oauth/kakao/reissue', {
-                    grantType: 'Bearer', // grantType 설정
+                const response = await api.post(`${domain}/oauth/kakao/reissue`, {
+                    grantType: 'Bearer',
                     accessToken: accessToken,
                     expireTime: expireTime,
                 });
@@ -76,7 +77,7 @@ const Redirection = () => {
                         title: '토큰 갱신 실패',
                         text: '다시 로그인해주세요!',
                     });
-                    navigate('/login'); // 갱신 실패시 리다이렉트
+                    navigate('/login');
                 }
             }
         };
@@ -106,13 +107,13 @@ const Redirection = () => {
         loginUser();
 
         return () => {
-            isMounted = false; 
+            isMounted = false;
         };
     }, [code, navigate]);
 
     if (loading) {
         return (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+            <div className="d-flex justify-content-center align-items-center text-center" style={{ height: "100vh" }}>
                 <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">로그인 중...</span>
                 </div>
@@ -120,7 +121,7 @@ const Redirection = () => {
         );
     }
 
-    return null; 
+    return null;
 };
 
 export default Redirection;
