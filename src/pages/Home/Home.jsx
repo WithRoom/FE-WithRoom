@@ -39,7 +39,7 @@ const Home = () => {
   // 사용자 정보 가져오기
   const fetchMemberInfo = async (token) => {
     try {
-      const response = await axios.get('/member/mypage/info', {
+      const response = await api.get('/member/mypage/info', {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('memberInfo', response.data);
@@ -52,7 +52,7 @@ const Home = () => {
   // 스터디 목록 가져오기
   const fetchStudies = async () => {
     try {
-      const response = await axios.get('/home/info', {
+      const response = await api.get('/home/info', {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       console.log('studies', response.data);

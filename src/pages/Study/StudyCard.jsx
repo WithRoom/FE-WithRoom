@@ -7,12 +7,16 @@ import Swal from 'sweetalert2';
 import { StudyContext } from './StudyContext';
 
 const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store', 
+  });
+
   console.log(isLiked, setIsLiked, studyId);
   const [studyIds, setStudyIds] = useState([]); 
   const [checkLiked, setCheckLiked] = useState(false);
 
   const handleLikeClick = () => {
-    axios
+    api
       .get("/study/mypage/info/mystudy", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       })
@@ -30,7 +34,7 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
         }
   
         // 그룹장이 아닐 경우 관심 등록/취소 로직 진행
-        axios
+        api
           .post("/study/interest", { studyId }, {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
           })
@@ -128,11 +132,15 @@ const RecruitmentInfo = ({ nowPeople, recruitPeople }) => (
 );
 
 const ActionButton = ({ state, studyId }) => {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store', 
+  });
+
   console.log(state, studyId);
 
   const studyJoin = async () => {
     try {
-      const response = await axios.post('/study/join', { studyId },
+      const response = await api.post('/study/join', { studyId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -169,9 +177,14 @@ const ActionButton = ({ state, studyId }) => {
 };
 
 const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store', 
+  });
+
+
   const handleAccept = async () => {
     try {
-      await axios.post('/study/response-join', { state: true, studyId, memberId },
+      await api.post('/study/response-join', { state: true, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -196,8 +209,12 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
   };
 
   const handleReject = async () => {
+    const api = axios.create({
+      baseURL: 'https://studywithme.store', 
+    });
+
     try {
-      await axios.post('/study/response-join', { state: false, studyId, memberId },
+      await api.post('/study/response-join', { state: false, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       Swal.fire({

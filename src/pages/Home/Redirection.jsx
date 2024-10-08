@@ -20,7 +20,7 @@ const Redirection = () => {
             console.log('code:', code);
 
             try {
-                 const result = await api.post('/oauth/kakao/login', { code }); 
+                 const result = await axios.post('/oauth/kakao/login', { code }); 
                 const { accessToken, expiresIn } = result.data;
 
                 if (isMounted) {
@@ -56,7 +56,7 @@ const Redirection = () => {
                 const accessToken = localStorage.getItem('accessToken');
                 const expireTime = localStorage.getItem('tokenExpiration');
 
-                const response = await api.post('https://studywithme.store/oauth/kakao/reissue', {
+                const response = await axios.post('https://studywithme.store/oauth/kakao/reissue', {
                     grantType: 'Bearer', // grantType 설정
                     accessToken: accessToken,
                     expireTime: expireTime,

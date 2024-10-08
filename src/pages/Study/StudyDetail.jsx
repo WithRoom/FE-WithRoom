@@ -47,6 +47,10 @@ const StudyDetail = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
 
+  const api = axios.create({
+    baseURL: 'https://studywithme.store', 
+  });
+
   useEffect(() => {
     const fetchStudyDetail = async () => {
       if (!studyId) {
@@ -55,7 +59,7 @@ const StudyDetail = () => {
       }
 
       try {
-        const response = await axios.post('/study/info/detail', { studyId }, {
+        const response = await axios.api('/study/info/detail', { studyId }, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
         setStudyDetail(response.data.studyDetail);
@@ -86,7 +90,7 @@ const StudyDetail = () => {
     }
   
     try {
-      await axios.post('/comment/create', {
+      await api.post('/comment/create', {
         studyId,
         content: newComment,
         isPrivate,
@@ -99,7 +103,7 @@ const StudyDetail = () => {
         title: '댓글이 추가되었습니다.',
       });
   
-      const detailResponse = await axios.post('/study/info/detail', { studyId }, {
+      const detailResponse = await api.post('/study/info/detail', { studyId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
   
@@ -117,7 +121,7 @@ const StudyDetail = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.post('/comment/delete', { commentId }, {
+      await axios.api('/comment/delete', { commentId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -143,7 +147,7 @@ const StudyDetail = () => {
 
   const handleFinishStudy = async () => {
     try {
-      const response = await axios.post('/study/finish', { studyId }, {
+      const response = await api.post('/study/finish', { studyId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 

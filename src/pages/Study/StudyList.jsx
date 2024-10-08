@@ -7,6 +7,10 @@ import StudySearchFilter from './StudySearchFilter';
 import noSearchImg from '../../images/nosearch.png';
 
 const StudyList = () => {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store', 
+  });
+
   const [allStudies, setAllStudies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -18,7 +22,7 @@ const StudyList = () => {
 
   const fetchAllStudies = async () => {
     try {
-      const response = await axios.get('/home/info', {
+      const response = await api.get('/home/info', {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       setAllStudies(response.data.homeStudyInfoList);

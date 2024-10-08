@@ -111,6 +111,10 @@ const StudySearchFilter = ({ updateStudies }) => {
   };
 
   const fetchSearchResults = (filters) => {
+    const api = axios.create({
+      baseURL: 'https://studywithme.store', 
+    });
+
     console.log(filters);
     setLoading(true);
 
@@ -120,7 +124,7 @@ const StudySearchFilter = ({ updateStudies }) => {
 
     const queryString = new URLSearchParams(filteredParams).toString();
 
-    axios.get(`/home/filter/info?${queryString}`, {
+    api.get(`/home/filter/info?${queryString}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
     })
       .then((response) => {

@@ -43,6 +43,10 @@ const VisuallyHiddenInput = styled('input')({
 const steps = ['기본 정보', '일정 설정', '상세 정보'];
 
 export default function StudyForm() {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store', 
+  });
+
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -112,7 +116,7 @@ export default function StudyForm() {
     formDataToSubmit.append('file', formData.image);
 
     try {
-      const response = await axios.post('/image/upload/study', formDataToSubmit, {
+      const response = await api.post('/image/upload/study', formDataToSubmit, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`,
@@ -150,7 +154,7 @@ export default function StudyForm() {
         confirmButtonText: "생성",
         cancelButtonText: "취소",
       }).then((result) => {
-        axios.post('/study/create', finalFormData, {
+        api.post('/study/create', finalFormData, {
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',
             'Authorization': `Bearer ${token}`

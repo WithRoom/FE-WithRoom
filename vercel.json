@@ -1,0 +1,8 @@
+{
+    "routes": [
+       {
+         "source": "/(.*)",
+         "destination": "https://withroom.store/$1"
+       }
+    ]
+  }

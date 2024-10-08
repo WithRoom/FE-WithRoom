@@ -3,6 +3,8 @@ import { Form, Row, Col } from "react-bootstrap";
 import data from "../../data/관심사리스트.json";
 
 const SelectInterestComponent = ({ onChange }) => {
+
+
   const [list, setList] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState("");
 

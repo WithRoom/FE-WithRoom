@@ -66,6 +66,10 @@ const EmptyState = ({ message }) => (
 
 // 커스텀 훅
 const useStudies = (activeTab) => {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store',
+  });
+
   const [studies, setStudies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -74,7 +78,7 @@ const useStudies = (activeTab) => {
       setIsLoading(true);
       try {
         const endpoint = TAB_ENDPOINTS[activeTab];
-        const response = await axios.get(endpoint, {
+        const response = await api.get(endpoint, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
 

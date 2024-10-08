@@ -16,6 +16,8 @@ import SelectComponent from './SelectComponent';
 import SelectInterestComponent from './SelectInterestComponent';
 
 export default function Register() {
+
+  
   const location = useLocation();
   const navigate = useNavigate();
   const { combinedString = "", selectedInterest = "" } = location.state || {};
@@ -198,6 +200,10 @@ function getErrorMessage(error) {
 }
 
 async function saveUser(url, json, token) {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store', 
+  });
+
   const response = await axios.post(url, json, {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',

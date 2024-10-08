@@ -25,6 +25,7 @@ const validationSchema = yup.object({
 });
 
 export default function UpdateProfile() {
+
   const location = useLocation();
   const navigate = useNavigate();
   const { combinedString = "", selectedInterest = "" } = location.state || {};
@@ -154,7 +155,7 @@ export default function UpdateProfile() {
             추가 정보 입력
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            정보 수정을 위해 아래 항목을 입력해주세요.
+            정보 ㅅ
           </Typography>
         </Box>
 
@@ -270,7 +271,11 @@ function getErrorMessage(error) {
 }
 
 async function saveUser(url, json, token) {
-  const response = await axios.post(url, json, {
+  const api = axios.create({
+    baseURL: 'https://studywithme.store',
+  });
+
+  const response = await api.post(url, json, {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
       'Authorization': `Bearer ${token}`
