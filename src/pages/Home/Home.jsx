@@ -90,7 +90,7 @@ const Home = () => {
           ))
         ) : (
           <Col md={12} className="mb-3">
-            <p>No studies available.</p> 
+           
           </Col>
         )}
         {studies.length > 6 && (
@@ -113,19 +113,6 @@ const Home = () => {
     <>
       <Header />
       <Container fluid className="px-0">
-        <Container className="py-4">
-          <Row className="justify-content-center mb-4">
-            {isAuthenticated ? (
-              <Col>
-                <h2>Welcome, {nickName}!</h2>
-              </Col>
-            ) : (
-              <Col>
-                <h2>Please log in to continue.</h2>
-              </Col>
-            )}
-          </Row>
-        </Container>
         <HomeStudyList studies={studies} />
       </Container>
       <Footer />
