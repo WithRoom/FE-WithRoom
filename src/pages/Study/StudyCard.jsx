@@ -246,6 +246,7 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
   );
 };
 
+
 const StudyCard = ({ study, cardType }) => {
   const [isLiked, setIsLiked] = useState(study.interest);
   const { setStudyId } = useContext(StudyContext);
@@ -280,12 +281,17 @@ const StudyCard = ({ study, cardType }) => {
           <div className="d-flex justify-content-between align-items-center">
             <RecruitmentInfo nowPeople={study.nowPeople} recruitPeople={study.recruitPeople} />
             {cardType === 'request-join' ? (
-              <AcceptRejectButtons 
-                studyId={study.studyId} 
-                memberId={study.memberId}
-                onAccept={() => {/* 수락 후 처리 로직 */}}
-                onReject={() => {/* 거절 후 처리 로직 */}}
-              />
+              <>
+                <Card.Title>신청자 목록</Card.Title>
+                  <Card.Text><strong>이름:</strong> {study.nickName}</Card.Text>
+                  <Card.Text><strong>선호 지역:</strong> {preferredArea}</Card.Text>
+                <AcceptRejectButtons 
+                  studyId={study.studyId} 
+                  memberId={study.memberId}
+                  onAccept={() => {/* 수락 후 처리 로직 */}}
+                  onReject={() => {/* 거절 후 처리 로직 */}}
+                />
+              </>
             ) : (
               <ActionButton state={study.state} studyId={study.studyId} />
             )}
