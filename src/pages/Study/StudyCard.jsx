@@ -284,7 +284,7 @@ const StudyCard = ({ study, cardType }) => {
               <>
                 <Card.Title>신청자 목록</Card.Title>
                   <Card.Text><strong>이름:</strong> {study.nickName}</Card.Text>
-                  <Card.Text><strong>선호 지역:</strong> {preferredArea}</Card.Text>
+                  <Card.Text><strong>선호 지역:</strong> {study.preferredArea}</Card.Text>
                 <AcceptRejectButtons 
                   studyId={study.studyId} 
                   memberId={study.memberId}
