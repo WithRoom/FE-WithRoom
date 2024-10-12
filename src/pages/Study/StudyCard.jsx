@@ -1,23 +1,60 @@
 import React, { useState, useContext } from 'react';
-import { Card, Button } from 'react-bootstrap';
+import { Card, Button, Modal } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Users, XCircle } from 'lucide-react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { StudyContext } from './StudyContext';
 
-const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
-  const api = axios.create({
-    baseURL: process.env.REACT_APP_DOMAIN, 
-  });
+function ApplicantModal({ nickName, preferredArea }) {
+  const [show, setShow] = useState(false);
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+       <Button variant="primary" size="sm" onClick={handleShow}>
+        신청자 목록
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>신청자 목록</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Card>
+            <Card.Title>신청자 정보</Card.Title>
+            <Card.Text>
+              <strong>닉네임:</strong> {nickName}
+            </Card.Text>
+            <Card.Text>
+              <strong>선호 지역:</strong> {preferredArea}
+            </Card.Text>
+          </Card>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+
+const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
   console.log(isLiked, setIsLiked, studyId);
   const [studyIds, setStudyIds] = useState([]); 
   const [checkLiked, setCheckLiked] = useState(false);
 
+  const [show, setShow] = useState(false);
+
+
   const handleLikeClick = () => {
-    api
-      .get(process.env.REACT_APP_DOMAIN + "/study/mypage/info/mystudy", {
+    axios
+      .get("/study/mypage/info/mystudy", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       })
       .then((response) => {
@@ -34,8 +71,8 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
         }
   
         // 그룹장이 아닐 경우 관심 등록/취소 로직 진행
-        api
-          .post(process.env.REACT_APP_DOMAIN + "/study/interest", { studyId }, {
+        axios
+          .post("/study/interest", { studyId }, {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
           })
           .then((response) => {
@@ -132,15 +169,11 @@ const RecruitmentInfo = ({ nowPeople, recruitPeople }) => (
 );
 
 const ActionButton = ({ state, studyId }) => {
-  const api = axios.create({
-    baseURL: process.env.REACT_APP_DOMAIN, 
-  });
-
   console.log(state, studyId);
 
   const studyJoin = async () => {
     try {
-      const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/join', { studyId },
+      const response = await axios.post('/study/join', { studyId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -177,14 +210,9 @@ const ActionButton = ({ state, studyId }) => {
 };
 
 const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
-  const api = axios.create({
-    baseURL: process.env.REACT_APP_DOMAIN, 
-  });
-
-
   const handleAccept = async () => {
     try {
-      await api.post(process.env.REACT_APP_DOMAIN + '/study/response-join', { state: true, studyId, memberId },
+      await axios.post('/study/response-join', { state: true, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -209,12 +237,8 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
   };
 
   const handleReject = async () => {
-    const api = axios.create({
-      baseURL: process.env.REACT_APP_DOMAIN, 
-    });
-
     try {
-      await api.post(process.env.REACT_APP_DOMAIN + '/study/response-join', { state: false, studyId, memberId },
+      await axios.post('/study/response-join', { state: false, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       Swal.fire({
@@ -245,7 +269,6 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
     </div>
   );
 };
-
 
 const StudyCard = ({ study, cardType }) => {
   const [isLiked, setIsLiked] = useState(study.interest);
@@ -282,9 +305,7 @@ const StudyCard = ({ study, cardType }) => {
             <RecruitmentInfo nowPeople={study.nowPeople} recruitPeople={study.recruitPeople} />
             {cardType === 'request-join' ? (
               <>
-                <Card.Title>신청자 목록</Card.Title>
-                  <Card.Text><strong>이름:</strong> {study.nickName}</Card.Text>
-                  <Card.Text><strong>선호 지역:</strong> {study.preferredArea}</Card.Text>
+                <ApplicantModal nickName={study.nickName} preferredArea={study.preferredArea}/>
                 <AcceptRejectButtons 
                   studyId={study.studyId} 
                   memberId={study.memberId}
