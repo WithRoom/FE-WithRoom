@@ -31,6 +31,7 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.26.1",
     "react-select": "^5.8.0",
+    "react-spinners": "^0.14.1",
     "shadcn-ui": "^0.9.1",
     "styled": "^1.0.0",
     "styled-components": "^6.1.13",
