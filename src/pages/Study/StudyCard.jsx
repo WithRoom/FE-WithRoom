@@ -5,6 +5,7 @@ import { Heart, Users, XCircle } from 'lucide-react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { StudyContext } from './StudyContext';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 function ApplicantModal({ nickName, preferredArea }) {
   const [show, setShow] = useState(false);
@@ -44,34 +45,43 @@ function ApplicantModal({ nickName, preferredArea }) {
 }
 
 
+import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+import { Heart } from "lucide-react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import BeatLoader from "react-spinners/BeatLoader";
+
 const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
-  console.log(isLiked, setIsLiked, studyId);
-  const [studyIds, setStudyIds] = useState([]); 
-  const [checkLiked, setCheckLiked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [show, setShow] = useState(false);
-
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_DOMAIN,
+  });
 
   const handleLikeClick = () => {
-    axios
+    setLoading(true); // 로딩 상태 시작
+
+    api
       .get("/study/mypage/info/mystudy", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       })
       .then((response) => {
         const groupLeaderStudies = response.data.groupLeaderStudies;
         const isGroupLeader = groupLeaderStudies.some((study) => study.studyId === studyId);
-  
+
         if (isGroupLeader) {
           Swal.fire({
             icon: "error",
             title: "관심 생성 실패",
             text: "스터디 그룹장은 관심 추가할 수 없습니다.",
           });
+          setLoading(false); // 로딩 상태 종료
           return; // 그룹장일 경우 관심 생성 중단
         }
-  
+
         // 그룹장이 아닐 경우 관심 등록/취소 로직 진행
-        axios
+        api
           .post("/study/interest", { studyId }, {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
           })
@@ -95,6 +105,7 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
                 setIsLiked(true);
               }
             }
+            setLoading(false); // 로딩 상태 종료
           })
           .catch((error) => {
             console.error("Error during interest request:", error);
@@ -103,24 +114,26 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
               title: "관심 등록에 실패했습니다.",
               text: error.response ? error.response.data : "Unknown error",
             });
+            setLoading(false); // 로딩 상태 종료
           });
       })
       .catch((error) => {
         console.error("Error during get my study:", error);
+        setLoading(false); // 로딩 상태 종료
       });
   };
-  
 
   return (
-    <Button
-      variant="link"
-      className="p-0"
-      onClick={handleLikeClick}
-    >
-      <Heart fill={isLiked ? "red" : "none"} color={isLiked ? "red" : "black"} />
+    <Button variant="link" className="p-0" onClick={handleLikeClick} disabled={loading}>
+      {loading ? (
+        <BeatLoader color="#9da503" loading={loading} size={10} />
+      ) : (
+        <Heart fill={isLiked ? "red" : "none"} color={isLiked ? "red" : "black"} />
+      )}
     </Button>
   );
 };
+
 
 const StudyImage = ({ src }) => (
   <Card.Img
@@ -169,11 +182,16 @@ const RecruitmentInfo = ({ nowPeople, recruitPeople }) => (
 );
 
 const ActionButton = ({ state, studyId }) => {
-  console.log(state, studyId);
+  const [loading, setLoading] = useState(false);
+
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_DOMAIN, 
+  });
 
   const studyJoin = async () => {
+    setLoading(true)
     try {
-      const response = await axios.post('/study/join', { studyId },
+      const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/join', { studyId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -194,6 +212,8 @@ const ActionButton = ({ state, studyId }) => {
 
     } catch (error) {
       console.error('Error joining study:', error);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -210,9 +230,14 @@ const ActionButton = ({ state, studyId }) => {
 };
 
 const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_DOMAIN, 
+  });
+
+
   const handleAccept = async () => {
     try {
-      await axios.post('/study/response-join', { state: true, studyId, memberId },
+      await api.post(process.env.REACT_APP_DOMAIN + '/study/response-join', { state: true, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -237,8 +262,12 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
   };
 
   const handleReject = async () => {
+    const api = axios.create({
+      baseURL: process.env.REACT_APP_DOMAIN, 
+    });
+
     try {
-      await axios.post('/study/response-join', { state: false, studyId, memberId },
+      await api.post(process.env.REACT_APP_DOMAIN + '/study/response-join', { state: false, studyId, memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       Swal.fire({
@@ -269,6 +298,7 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
     </div>
   );
 };
+
 
 const StudyCard = ({ study, cardType }) => {
   const [isLiked, setIsLiked] = useState(study.interest);
