@@ -288,8 +288,10 @@ const StudyCard = ({ study, cardType }) => {
                 <AcceptRejectButtons 
                   studyId={study.studyId} 
                   memberId={study.memberId}
-                  onAccept={() => {/* 수락 후 처리 로직 */}}
-                  onReject={() => {/* 거절 후 처리 로직 */}}
+                  onAccept={() => {navigate('/me');
+                  }}
+                  onReject={() => {navigate('/me');
+                  }}
                 />
               </>
             ) : (

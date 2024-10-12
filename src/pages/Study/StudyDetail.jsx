@@ -120,6 +120,10 @@ const StudyDetail = () => {
   };
 
   const handleDeleteComment = async (commentId) => {
+    const api = axios.create({
+      baseURL: process.env.REACT_APP_DOMAIN, 
+    });
+
     try {
       await api.post(process.env.REACT_APP_DOMAIN + '/comment/delete', { commentId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
@@ -146,6 +150,10 @@ const StudyDetail = () => {
   };
 
   const handleFinishStudy = async () => {
+    const api = axios.create({
+      baseURL: process.env.REACT_APP_DOMAIN, 
+    });
+
     try {
       const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/finish', { studyId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
