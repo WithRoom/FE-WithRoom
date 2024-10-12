@@ -44,14 +44,6 @@ function ApplicantModal({ nickName, preferredArea }) {
   );
 }
 
-
-import React, { useState } from "react";
-import { Button } from "react-bootstrap";
-import { Heart } from "lucide-react";
-import axios from "axios";
-import Swal from "sweetalert2";
-import BeatLoader from "react-spinners/BeatLoader";
-
 const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
   const [loading, setLoading] = useState(false);
 
