@@ -62,6 +62,7 @@ export default function StudyForm() {
     description: '',
     difficulty: '',
     searchTags: '',
+    kakaoOpenChatUrl: '',
     image: null,
     imagePreview: null
   });
@@ -135,6 +136,7 @@ export default function StudyForm() {
           topic: formData.topic,
           difficulty: formData.difficulty,
           tag: formData.searchTags,
+          kakaoOpenChatUrl : formData.kakaoOpenChatUrl
         },
         studySchedule: {
           weekDay: formData.days.join(', '),
@@ -222,6 +224,15 @@ export default function StudyForm() {
                 value={formData.title}
                 onChange={handleChange('title')}
                 helperText={`${formData.title.length}/50`}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="카카오 오픈 채팅 URL"
+                value={formData.kakaoOpenChatUrl}
+                onChange={handleChange('kakaoOpenChatUrl')}
+                placeholder='카카오 오픈 채팅 URL을 입력해주세요.'
               />
             </Grid>
             <Grid item xs={12}>
