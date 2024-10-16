@@ -20,6 +20,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import StudySchedule from './StudySchedule';
 import Skeleton from 'react-loading-skeleton';
+import {useNavigate } from "react-router-dom";
 
 const StyledCard = ({ children, ...props }) => (
   <Card
@@ -46,6 +47,7 @@ const StudyDetail = () => {
   const [newComment, setNewComment] = useState('');
   const [isFinished, setIsFinished] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isDeleted,setIstDeleted] = useState(false);
 
   const api = axios.create({
     baseURL: process.env.REACT_APP_DOMAIN, 
@@ -78,6 +80,37 @@ const StudyDetail = () => {
 
     fetchStudyDetail();
   }, [studyId]);
+
+  const handleDeleteStudy = async () => {
+    try{
+      const response = await axios.post('/study/delete', { studyId }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+
+      if(response.data === true){
+        Swal.fire({
+          icon: 'success',
+          title: '스터디가 삭제되었습니다.',
+        });
+        setIstDeleted(true);
+        navigate('/home');
+      }else{
+        Swal.fire({
+          icon: 'fail',
+          title: '스터디가 삭제 실패! 다시 시도해주세요.',
+        });
+        setIstDeleted(false);
+      }
+
+    }catch(error){
+      console.error('Error deleting study:', error);
+      Swal.fire({
+        icon: 'error',
+        title: '스터디 삭세 중 오류가 발생했습니다. 시스템에 문의해주세요.',
+        text: error.message,
+      });
+    }
+  }
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -211,6 +244,9 @@ const StudyDetail = () => {
       <Box sx={{ my: 2 }}>
         <Grid container spacing={2}>
         <Grid item xs={3} md={3}>
+           <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteStudy(studyDetail.studyId)}>
+                            <DeleteIcon />
+            </IconButton>
             <StyledCard>
               <CardMedia
                 component="img"
