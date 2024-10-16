@@ -18,20 +18,20 @@ const App = () => {
     const onBeforeUnload = (event) => {
       const isReload = sessionStorage.getItem('isReload');
       if (!isReload) {
-        localStorage.clear();
+        sessionStorage.clear(); 
       }
     };
   
-    const clearLocalStorageOnClose = () => {
+    const clearSessionStorageOnLoad = () => {
       sessionStorage.setItem('isReload', 'true');
     };
   
     window.addEventListener('beforeunload', onBeforeUnload);
-    window.addEventListener('load', clearLocalStorageOnClose);
+    window.addEventListener('load', clearSessionStorageOnLoad);
   
     return () => {
       window.removeEventListener('beforeunload', onBeforeUnload);
-      window.removeEventListener('load', clearLocalStorageOnClose);
+      window.removeEventListener('load', clearSessionStorageOnLoad);
     };
   }, []);
   
