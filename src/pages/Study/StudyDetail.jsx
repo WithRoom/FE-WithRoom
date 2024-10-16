@@ -84,35 +84,49 @@ const StudyDetail = () => {
   }, [studyId]);
 
   const handleDeleteStudy = async () => {
-    try{
-      const response = await api.post(process.env.REACT_APP_DOMAIN  + '/study/delete', { studyId }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+    try {
+      // Show confirmation alert
+      const result = await Swal.fire({
+        title: '스터디 삭제',
+        text: '정말로 이 스터디를 삭제하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소'
       });
-
-      if(response.data === true){
-        Swal.fire({
-          icon: 'success',
-          title: '스터디가 삭제되었습니다.',
+  
+      // If user confirms deletion
+      if (result.isConfirmed) {
+        const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/delete', { studyId }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
-        setIstDeleted(true);
-        navigate('/home');
-      }else{
-        Swal.fire({
-          icon: 'fail',
-          title: '스터디가 삭제 실패! 다시 시도해주세요.',
-        });
-        setIstDeleted(false);
+  
+        if (response.data === true) {
+          Swal.fire({
+            icon: 'success',
+            title: '스터디가 삭제되었습니다.',
+          });
+          setIstDeleted(true);
+          navigate('/home');
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: '스터디 삭제 실패! 다시 시도해주세요.',
+          });
+          setIstDeleted(false);
+        }
       }
-
-    }catch(error){
+    } catch (error) {
       console.error('Error deleting study:', error);
       Swal.fire({
         icon: 'error',
-        title: '스터디 삭세 중 오류가 발생했습니다. 시스템에 문의해주세요.',
+        title: '스터디 삭제 중 오류가 발생했습니다. 시스템에 문의해주세요.',
         text: error.message,
       });
     }
-  }
+  };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();

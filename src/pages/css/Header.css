@@ -25,9 +25,9 @@
 
 .header-container {
   padding: 40px;
-  border-bottom: 1px solid #ddd;
   text-align: left;
   width: 100%;
+  margin-bottom: 3rem;
 }
 
 .title-section {
