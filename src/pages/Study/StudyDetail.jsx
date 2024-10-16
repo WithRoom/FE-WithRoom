@@ -20,7 +20,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import StudySchedule from './StudySchedule';
 import Skeleton from 'react-loading-skeleton';
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const StyledCard = ({ children, ...props }) => (
   <Card
@@ -48,6 +48,8 @@ const StudyDetail = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [isDeleted,setIstDeleted] = useState(false);
+
+  const navigate = useNavigate();
 
   const api = axios.create({
     baseURL: process.env.REACT_APP_DOMAIN, 
