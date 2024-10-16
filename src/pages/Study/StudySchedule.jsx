@@ -18,8 +18,8 @@ const StudySchedule = ({ studyScheduleDetail }) => {
   }, [studyScheduleDetail.endDay]);
 
   return (
-    <Card className="w-64 bg-gray-100 shadow-md">
-      <Card.Header className="bg-gray-200 py-2 d-flex align-items-center">
+    <Card className="w-64 bg-gray-100 shadow-md" style={{ border: "solid" }}>     
+      <Card.Header className="bg-gray-200 py-2 d-flex align-items-center" style={{ borderBottom: "solid" }}>
         <Calendar className="mr-2" size={20} />
         <h2 className="text-lg font-semibold mb-0">스터디 일정</h2>
       </Card.Header>

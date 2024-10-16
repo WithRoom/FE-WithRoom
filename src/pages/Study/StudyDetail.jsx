@@ -10,7 +10,8 @@ import {
   EmojiEvents as TrophyIcon, 
   LocalOffer as TagIcon,
   Send as SendIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  Cancel as CancleIcon
 } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -385,19 +386,20 @@ const StudyDetail = () => {
 
           <Grid item xs={12} md={3}>
             <StudySchedule studyScheduleDetail={studyScheduleDetail} />
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 3 }}>
               {isFinished ? (
-                <Typography color="error" variant="h6" align="center">
-                  마감된 스터디
+                <Typography color="textPrimary" variant="h5" align="center" >
+                  <CancleIcon /> 스터디 마감
                 </Typography>
               ) : (
                 <Button 
                   variant="contained" 
                   color="error" 
-                  fullWidth 
+                  width="100%"
+                  paragraph="center"
                   onClick={handleFinishStudy}
                 >
-                  스터디 마감
+                  <CancleIcon />  스터디 마감
                 </Button>
               )}
             </Box>
