@@ -85,7 +85,7 @@ const StudyDetail = () => {
 
   const handleDeleteStudy = async () => {
     try{
-      const response = await axios.post('/study/delete', { studyId }, {
+      const response = await api.post(process.env.REACT_APP_DOMAIN  + '/study/delete', { studyId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
