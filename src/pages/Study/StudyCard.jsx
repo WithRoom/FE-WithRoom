@@ -51,68 +51,87 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
     baseURL: process.env.REACT_APP_DOMAIN,
   });
 
-  const handleLikeClick = () => {
-    setLoading(true); // 로딩 상태 시작
+  const handleLikeClick = async () => {
+    setLoading(true); 
 
-    api
-      .get("/study/mypage/info/mystudy", {
+    try {
+      const response = await api.get(process.env.REACT_APP_DOMAIN + "/study/mypage/info/mystudy", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
-      })
-      .then((response) => {
-        const groupLeaderStudies = response.data.groupLeaderStudies;
-        const isGroupLeader = groupLeaderStudies.some((study) => study.studyId === studyId);
-
-        if (isGroupLeader) {
-          Swal.fire({
-            icon: "error",
-            title: "관심 생성 실패",
-            text: "스터디 그룹장은 관심 추가할 수 없습니다.",
-          });
-          setLoading(false); // 로딩 상태 종료
-          return; // 그룹장일 경우 관심 생성 중단
-        }
-
-        // 그룹장이 아닐 경우 관심 등록/취소 로직 진행
-        api
-          .post("/study/interest", { studyId }, {
-            headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
-          })
-          .then((response) => {
-            if (response.data === true) {
-              if (isLiked) {
-                Swal.fire({
-                  icon: "success",
-                  title: "관심이 취소되었습니다.",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-                setIsLiked(false);
-              } else {
-                Swal.fire({
-                  icon: "success",
-                  title: "관심이 등록되었습니다.",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-                setIsLiked(true);
-              }
-            }
-            setLoading(false); // 로딩 상태 종료
-          })
-          .catch((error) => {
-            console.error("Error during interest request:", error);
-            Swal.fire({
-              icon: "error",
-              title: "관심 등록에 실패했습니다.",
-              text: error.response ? error.response.data : "Unknown error",
-            });
-            setLoading(false); // 로딩 상태 종료
-          });
-      })
-      .catch((error) => {
-        console.error("Error during get my study:", error);
-        setLoading(false); // 로딩 상태 종료
       });
+
+      const groupLeaderStudies = response.data.groupLeaderStudies;
+      const isGroupLeader = groupLeaderStudies.some((study) => study.studyId === studyId);
+
+      console.log('isGroupLeader:', isGroupLeader);
+      console.log('groupLeaderStudies:', groupLeaderStudies);
+      console.log('isLiked:', isLiked);
+
+      if (isGroupLeader) {
+        Swal.fire({
+          icon: "error",
+          title: "관심 생성 실패",
+          text: "스터디 그룹장은 관심 추가할 수 없습니다.",
+        });
+        setLoading(false); // End loading
+        return;
+      }
+
+      if(isLiked === false) {
+        const result = await Swal.fire({
+          title: '관심 추가',
+          text: '관심을 추가하시겠습니까?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: '확인',
+          cancelButtonText: '취소',
+          confirmButtonColor: '#9da503',
+          cancelButtonColor: '#d33'
+        });  
+        if (result.isConfirmed) {
+          await axios.post("/study/interest", { studyId }, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+          });
+  
+          Swal.fire({
+            icon: "success" ,
+            title: "관심이 등록되었습니다.",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+  
+          setIsLiked(true);
+        }
+      }else{
+        const result = await Swal.fire({
+          title: '관심 취소',
+          text: '관심을 취소하시겠습니까?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: '확인',
+          cancelButtonText: '취소',
+          confirmButtonColor: '#9da503',
+          cancelButtonColor: '#d33'
+        });  
+        if (result.isConfirmed) {
+          await api.post(process.env.REACT_APP_DOMAIN + "/study/interest", { studyId }, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+          });
+  
+          Swal.fire({
+            icon: "error" ,
+            title: "관심이 취소되었습니다.",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+  
+          setIsLiked(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error during get my study:", error);
+    } finally {
+      setLoading(false); // End loading
+    }
   };
 
   return (
