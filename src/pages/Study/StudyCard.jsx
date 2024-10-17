@@ -55,16 +55,12 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
     setLoading(true); 
 
     try {
-      const response = await api.get(process.env.REACT_APP_DOMAIN + "/study/mypage/info/mystudy", {
+      const response = await api.get("/study/mypage/info/mystudy", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
 
       const groupLeaderStudies = response.data.groupLeaderStudies;
       const isGroupLeader = groupLeaderStudies.some((study) => study.studyId === studyId);
-
-      console.log('isGroupLeader:', isGroupLeader);
-      console.log('groupLeaderStudies:', groupLeaderStudies);
-      console.log('isLiked:', isLiked);
 
       if (isGroupLeader) {
         Swal.fire({
@@ -72,11 +68,11 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
           title: "관심 생성 실패",
           text: "스터디 그룹장은 관심 추가할 수 없습니다.",
         });
-        setLoading(false); // End loading
+        setLoading(false);
         return;
       }
 
-      if(isLiked === false) {
+      if (isLiked === false) {
         const result = await Swal.fire({
           title: '관심 추가',
           text: '관심을 추가하시겠습니까?',
@@ -88,12 +84,12 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
           cancelButtonColor: '#d33'
         });  
         if (result.isConfirmed) {
-          await axios.post("/study/interest", { studyId }, {
+          await api.post("/study/interest", { studyId }, {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
           });
   
           Swal.fire({
-            icon: "success" ,
+            icon: "success",
             title: "관심이 등록되었습니다.",
             showConfirmButton: false,
             timer: 1500,
@@ -101,7 +97,7 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
   
           setIsLiked(true);
         }
-      }else{
+      } else {
         const result = await Swal.fire({
           title: '관심 취소',
           text: '관심을 취소하시겠습니까?',
@@ -113,12 +109,12 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
           cancelButtonColor: '#d33'
         });  
         if (result.isConfirmed) {
-          await api.post(process.env.REACT_APP_DOMAIN + "/study/interest", { studyId }, {
+          await api.post("/study/interest", { studyId }, {
             headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
           });
   
           Swal.fire({
-            icon: "error" ,
+            icon: "error",
             title: "관심이 취소되었습니다.",
             showConfirmButton: false,
             timer: 1500,
@@ -130,7 +126,7 @@ const LikeButton = ({ isLiked, setIsLiked, studyId }) => {
     } catch (error) {
       console.error("Error during get my study:", error);
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
