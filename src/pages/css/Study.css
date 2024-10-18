@@ -1,0 +1,21 @@
+.dark-popup {
+    background-color: #333; /* Dark background */
+  }
+  
+  .dark-title {
+    color: #fff; /* White text */
+  }
+  
+  .dark-text {
+    color: #ccc; /* Slightly lighter text for description */
+  }
+  
+  .dark-confirm {
+    background-color: #555; /* Darker confirm button */
+    color: #fff;
+  }
+  
+  .dark-cancel {
+    background-color: #999; /* Darker cancel button */
+    color: #fff;
+  }
