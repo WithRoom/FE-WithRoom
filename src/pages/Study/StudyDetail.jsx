@@ -21,7 +21,9 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import StudySchedule from './StudySchedule';
 import Skeleton from 'react-loading-skeleton';
-import { useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
+import '../css/Study.css';
+import { format } from 'date-fns'; 
 
 const StyledCard = ({ children, ...props }) => (
   <Card
@@ -47,7 +49,7 @@ const StudyDetail = () => {
   const [studyCommentList, setStudyCommentList] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [isFinished, setIsFinished] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [anonymous, setAnonymous] = useState(false);
   const [isDeleted,setIstDeleted] = useState(false);
 
   const navigate = useNavigate();
@@ -153,7 +155,7 @@ const StudyDetail = () => {
       await api.post(process.env.REACT_APP_DOMAIN + '/comment/create', {
         studyId,
         content: newComment,
-        isPrivate,
+        anonymous,
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -329,68 +331,77 @@ const StudyDetail = () => {
                 </Paper>
 
                 <Box>
-                  <Typography variant="h6" gutterBottom>
-                    댓글 {studyCommentList.length}
-                  </Typography>
-                  <List>
-                    {studyCommentList.map((comment, index) => (
-                      <React.Fragment key={index}>
-                        <ListItem alignItems="flex-start">
-                          <ListItemAvatar>
-                            <Avatar>{comment.nickName[0]}</Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={comment.nickName}
-                            secondary={comment.content}
-                          />
-                          <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteComment(comment.commentId)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </ListItem>
-                        {index < studyCommentList.length - 1 && <Divider variant="inset" component="li" />}
-                      </React.Fragment>
-                    ))}
-                  </List>
-                  
-                  <Box component="form" onSubmit={handleCommentSubmit} sx={{ mt: 2 }}>
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={3}
-                      placeholder="댓글을 입력하세요"
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      variant="outlined"
-                      inputProps={{ maxLength: 300 }}
-                      sx={{ mb: 1 }}
-                    />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography variant="caption" color="text.secondary" sx={{ mr: 2 }}>
-                          {newComment.length}/300
-                        </Typography>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={isPrivate}
-                              onChange={(e) => setIsPrivate(e.target.checked)}
-                              size="small"
+                    <Typography variant="h6" gutterBottom>
+                      댓글 {studyCommentList.length}
+                    </Typography>
+                    <List>
+                      {studyCommentList.map((comment, index) => (
+                        <React.Fragment key={index}>
+                          <ListItem alignItems="flex-start">
+                            <ListItemAvatar>
+                              {comment.anonymous ? <Avatar>익명</Avatar> : (
+                                <Avatar>{comment.nickName[0]}</Avatar> 
+                              )}
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={comment.anonymous ? '익명' : comment.nickName} 
+                              secondary={
+                                <>
+                                  {comment.content}
+                                  <Typography variant="caption" color="text.secondary" display="block">
+                                    {format(new Date(comment.commentDateTime), 'yyyy-MM-dd HH:mm')} {/* Format date */}
+                                  </Typography>
+                                </>
+                              }
                             />
-                          }
-                          label="비밀댓글"
-                        />
+                            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteComment(comment.commentId)}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItem>
+                          {index < studyCommentList.length - 1 && <Divider variant="inset" component="li" />}
+                        </React.Fragment>
+                      ))}
+                    </List>
+
+                    <Box component="form" onSubmit={handleCommentSubmit} sx={{ mt: 2 }}>
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={3}
+                        placeholder="댓글을 입력하세요"
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        variant="outlined"
+                        inputProps={{ maxLength: 300 }}
+                        sx={{ mb: 1 }}
+                      />
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ mr: 2 }}>
+                            {newComment.length}/300
+                          </Typography>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={anonymous}
+                                onChange={(e) => setAnonymous(e.target.checked)}
+                                size="small"
+                              />
+                            }
+                            label="비밀댓글"
+                          />
+                        </Box>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          endIcon={<SendIcon />}
+                          disabled={!newComment.trim()}
+                        >
+                          댓글 등록
+                        </Button>
                       </Box>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        endIcon={<SendIcon />}
-                        disabled={!newComment.trim()}
-                      >
-                        댓글 등록
-                      </Button>
                     </Box>
                   </Box>
-                </Box>
               </CardContent>
             </StyledCard>
           </Grid>
