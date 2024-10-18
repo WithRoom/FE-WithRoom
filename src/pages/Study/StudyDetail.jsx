@@ -86,19 +86,29 @@ const StudyDetail = () => {
 
   const handleDeleteStudy = async () => {
     try {
-      // Show confirmation alert
       const result = await Swal.fire({
         title: '스터디 삭제',
         text: '정말로 이 스터디를 삭제하시겠습니까?',
-        icon: 'warning',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
+        confirmButton: 'btn waves-effect waves-light btn-outline-primary btn-white font-weight-bold mr-2',
         confirmButtonText: '삭제',
-        cancelButtonText: '취소'
+        cancelButtonText: '취소',
+        background : '#b998f5',
+        background: '#333', 
+        color: '#fff', 
+        confirmButton: 'btn waves-effect waves-light btn-outline-primary btn-white font-weight-bold mr-2',
+        customClass: {
+          popup: 'dark-popup',
+          title: 'dark-title',
+          htmlContainer: 'dark-text',
+          confirmButton: 'dark-confirm',
+          cancelButton: 'dark-cancel',
+        },
       });
   
-      // If user confirms deletion
       if (result.isConfirmed) {
         const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/delete', { studyId }, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
@@ -169,6 +179,7 @@ const StudyDetail = () => {
     }
   };
 
+  // 여기 405 에러 발생
   const handleDeleteComment = async (commentId) => {
     const api = axios.create({
       baseURL: process.env.REACT_APP_DOMAIN, 
