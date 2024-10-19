@@ -186,21 +186,49 @@ const StudyDetail = () => {
     const api = axios.create({
       baseURL: process.env.REACT_APP_DOMAIN, 
     });
-
+  
     try {
-      await api.post(process.env.REACT_APP_DOMAIN + '/comment/delete', { commentId }, {
+      const result = await Swal.fire({
+        title: '댓글 삭제',
+        text: '삭제하시겠습니까?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+        background: '#333', 
+        color: '#fff', 
+        customClass: {
+          popup: 'dark-popup',
+          title: 'dark-title',
+          htmlContainer: 'dark-text',
+          confirmButton: 'dark-confirm',
+          cancelButton: 'dark-cancel',
+        },
+      });
+  
+      if (result.isConfirmed) {
+        const response = await api.post('/comment/delete', { commentId }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+        if (response.data === true) {
+          Swal.fire({
+            icon: 'success',
+            title: '댓글이 삭제되었습니다.',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: '댓글 삭제 실패! 다시 시도해주세요.',
+          });
+        }
+      }
+  
+      const detailResponse = await api.post('/study/info/detail', { studyId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
-
-      Swal.fire({
-        icon: 'success',
-        title: '댓글이 삭제되었습니다.',
-      });
-
-      const detailResponse = await axios.post('/study/info/detail', { studyId }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
-
+  
       setStudyCommentList(detailResponse.data.studyCommentList);
     } catch (error) {
       console.error('Error deleting comment:', error);
