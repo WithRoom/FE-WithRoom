@@ -209,7 +209,7 @@ const StudyDetail = () => {
       });
   
       if (result.isConfirmed) {
-        const response = await api.post('/comment/delete', { commentId }, {
+        const response = await api.post(process.env.REACT_APP_DOMAIN+ '/comment/delete', { commentId }, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
         if (response.data === true) {
