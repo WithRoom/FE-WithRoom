@@ -224,6 +224,7 @@ export default function StudyForm() {
                 value={formData.title}
                 onChange={handleChange('title')}
                 helperText={`${formData.title.length}/50`}
+                placeholder="스터디 제목을 입력해주세요." 
               />
             </Grid>
             <Grid item xs={12}>
@@ -255,6 +256,7 @@ export default function StudyForm() {
                 type="number"
                 value={formData.memberCount}
                 onChange={handleChange('memberCount')}
+                placeholder="모집 인원을 입력해주세요." 
               />
             </Grid>
             <Grid item xs={12}>
@@ -353,6 +355,7 @@ export default function StudyForm() {
                 value={formData.description}
                 onChange={(value) => setFormData({ ...formData, description: value })}
                 style={{ height: '200px', marginBottom: '50px' }}
+                placeholder="스터디 소개를 입력해주세요. 예시: 프로젝트 목적, 진행 방식, 모집 방식 등"
               />
             </Grid>
             <Grid item xs={12}>
