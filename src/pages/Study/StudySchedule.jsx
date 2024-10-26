@@ -9,13 +9,20 @@ import { set } from 'date-fns';
 
 
 const StudySchedule = ({ studyScheduleDetail, studyId }) => {
+  
+  
   const [isFinished, setIsFinished] = useState(false);
   const [homeStudyInfoList, setHomeStudyInfoList] = useState([]);
 
   useEffect(() => {
+
+    const api = axios.create({
+      baseURL: process.env.REACT_APP_DOMAIN, 
+    });
+
     const fetchStudyInfo = async () => {
       try {
-        const response = await axios.get(`/home/filter/info`, {
+        const response = await api.get(process.env.REACT_APP_DOMAIN + `/home/filter/info`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
         });
 
@@ -76,10 +83,25 @@ const StudySchedule = ({ studyScheduleDetail, studyId }) => {
 
   return (
     <Card className="w-64 bg-gray-100 shadow-md" style={{ border: "solid" }}>     
-      <Card.Header className="bg-gray-200 py-2 d-flex align-items-center" style={{ borderBottom: "solid" }}>
-        <Calendar className="mr-2" size={20} />
-        <h2 className="text-lg font-semibold mb-0">스터디 일정</h2>
-      </Card.Header>
+      <Card.Header className="bg-gray-200 py-2 d-flex align-items-center">
+          <Calendar className="mr-4" size={20} />
+          <h2 className="text-lg font-semibold mb-0">스터디 일정</h2>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+            {isFinished ? (
+              <Typography color="error" variant="h4" align="right">
+                마감
+              </Typography>
+            ) : (
+              <Button 
+                variant="contained" 
+                color="error" 
+                onClick={() => handleFinishStudy()}
+              >
+                마감
+              </Button>
+            )}
+          </Box>
+        </Card.Header>
 
       <Card.Body className="p-4">
         <div className="d-flex justify-content-between mb-4">
