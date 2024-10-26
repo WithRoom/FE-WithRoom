@@ -181,7 +181,6 @@ const StudyDetail = () => {
     }
   };
 
-  // 여기 405 에러 발생
   const handleDeleteComment = async (commentId) => {
     const api = axios.create({
       baseURL: process.env.REACT_APP_DOMAIN, 
@@ -240,40 +239,6 @@ const StudyDetail = () => {
     }
   };
 
-  const handleFinishStudy = async () => {
-    const api = axios.create({
-      baseURL: process.env.REACT_APP_DOMAIN, 
-    });
-
-    try {
-      const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/finish', { studyId }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
-
-      if (response.data === true) {
-        Swal.fire({
-          icon: 'success',
-          title: '스터디를 마감합니다.',
-          showConfirmButton: true,
-        });
-        setIsFinished(true);
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: '그룹장만 스터디를 마감할 수 있습니다.',
-          showConfirmButton: false,
-        });
-      }
-    } catch (error) {
-      console.error('Error finishing study:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '스터디 마감에 실패했습니다.',
-        text: error.message,
-      });
-    }
-  };
-
   if (!studyDetail || !studyGroupLeader || !studyScheduleDetail) {
     return (
       <Container>
@@ -299,30 +264,14 @@ const StudyDetail = () => {
   return (
     <Container>
       <Header />
-      <Box sx={{ my: 2 }}>
-        <Grid container spacing={2}>
-        <Grid item xs={3} md={3}>
-           <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteStudy(studyDetail.studyId)}>
-                            <DeleteIcon />
-            </IconButton>
-            <StyledCard>
-              <CardMedia
-                component="img"
-                image={studyDetail.studyImageUrl}
-                alt={studyDetail.title}
-                sx={{
-                  width: '100%',        
-                  height: 'auto',    
-                  objectFit: 'cover',   
-                  borderRadius: '8px',  
-                }}
-              />
-            </StyledCard>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
+      <Box sx={{ my: 3 }}>
+        <Grid container spacing={6}>
+        <Grid item xs={12} md={9}>
             <StyledCard>
               <CardContent>
+              <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteStudy(studyDetail.studyId)}>
+                            <DeleteIcon />
+            </IconButton>
                 <Typography variant="h4" component="h1" gutterBottom align="center">
                   {studyDetail.title}
                 </Typography>
@@ -436,23 +385,6 @@ const StudyDetail = () => {
 
           <Grid item xs={12} md={3}>
             <StudySchedule studyScheduleDetail={studyScheduleDetail} />
-            <Box sx={{ mt: 3 }}>
-              {isFinished ? (
-                <Typography color="textPrimary" variant="h5" align="center" >
-                  <CancleIcon /> 스터디 마감
-                </Typography>
-              ) : (
-                <Button 
-                  variant="contained" 
-                  color="error" 
-                  width="100%"
-                  paragraph="center"
-                  onClick={handleFinishStudy}
-                >
-                  <CancleIcon />  스터디 마감
-                </Button>
-              )}
-            </Box>
           </Grid>
         </Grid>
       </Box>

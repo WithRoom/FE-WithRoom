@@ -2,20 +2,77 @@ import React, { useEffect } from 'react';
 import { Calendar } from 'lucide-react';
 import { Card } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+import {Box, Button, Typography} from '@mui/material';
+import axios from 'axios';
+import { useState } from 'react';
+import { set } from 'date-fns';
 
-const StudySchedule = ({ studyScheduleDetail }) => {
-  console.log('studyScheduleDetail',studyScheduleDetail);
+
+const StudySchedule = ({ studyScheduleDetail, studyId }) => {
+  const [isFinished, setIsFinished] = useState(false);
+  const [homeStudyInfoList, setHomeStudyInfoList] = useState([]);
 
   useEffect(() => {
-    const currentDate = new Date().toISOString().split('T')[0];
-    if (currentDate > studyScheduleDetail.endDay) {
+    const fetchStudyInfo = async () => {
+      try {
+        const response = await axios.get(`/home/filter/info`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        });
+
+        console.log('Fetched study info:', response);
+        const studyInfoList = response.data.homeStudyInfoList;
+        setHomeStudyInfoList(studyInfoList);
+
+        const currentStudy = studyInfoList.find((study) => study.studyId === studyId);
+
+        console.log('Current study:', currentStudy);
+
+        const currentDate = new Date().toISOString().split('T')[0];
+        if (currentDate > studyScheduleDetail.endDay || currentStudy.finish === true) {
+          setIsFinished(true);
+          Swal.fire({
+            icon: 'warning',
+            title: '마감된 스터디입니다',
+            showConfirmButton: true,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching study info:', error);
+      }
+    };
+
+    fetchStudyInfo();
+  }, [studyScheduleDetail.endDay, studyId]);
+
+  const handleFinishStudy = async () => {
+    try {
+      const response = await axios.post('/study/finish', { studyId }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+      });
+
+      if (response.data === true) {
+        Swal.fire({
+          icon: 'success',
+          title: '스터디를 마감합니다.',
+          showConfirmButton: true,
+        });
+        setIsFinished(true);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '그룹장만 스터디를 마감할 수 있습니다.',
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error('Error finishing study:', error);
       Swal.fire({
-        icon: 'warning',
-        title: '마감된 스터디입니다',
-        showConfirmButton: true,
+        icon: 'error',
+        title: '스터디 마감에 실패했습니다.',
+        text: error.message,
       });
     }
-  }, [studyScheduleDetail.endDay]);
+  };
 
   return (
     <Card className="w-64 bg-gray-100 shadow-md" style={{ border: "solid" }}>     
