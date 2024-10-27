@@ -3,7 +3,8 @@ import {
   Container, Box, Grid, Card, CardContent, CardMedia, 
   Typography, TextField, Button, Chip, Avatar,
   List, ListItem, ListItemText, ListItemAvatar,
-  Divider, IconButton, Paper, FormControlLabel, Checkbox
+  Divider, IconButton, Paper, FormControlLabel, Checkbox,
+  Pagination
 } from '@mui/material';
 import { 
   Book as BookIcon, 
@@ -21,7 +22,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import StudySchedule from './StudySchedule';
 import Skeleton from 'react-loading-skeleton';
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import '../css/Study.css';
 import { format } from 'date-fns'; 
 
@@ -50,7 +51,9 @@ const StudyDetail = () => {
   const [newComment, setNewComment] = useState('');
   const [isFinished, setIsFinished] = useState(false);
   const [anonymous, setAnonymous] = useState(false);
-  const [isDeleted,setIstDeleted] = useState(false);
+  const [isDeleted, setIstDeleted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 5;
 
   const navigate = useNavigate();
 
@@ -95,13 +98,10 @@ const StudyDetail = () => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButton: 'btn waves-effect waves-light btn-outline-primary btn-white font-weight-bold mr-2',
         confirmButtonText: '삭제',
         cancelButtonText: '취소',
-        background : '#b998f5',
         background: '#333', 
         color: '#fff', 
-        confirmButton: 'btn waves-effect waves-light btn-outline-primary btn-white font-weight-bold mr-2',
         customClass: {
           popup: 'dark-popup',
           title: 'dark-title',
@@ -171,6 +171,7 @@ const StudyDetail = () => {
   
       setStudyCommentList(detailResponse.data.studyCommentList);
       setNewComment('');
+      setCurrentPage(1);
     } catch (error) {
       console.error('Error creating comment:', error);
       Swal.fire({
@@ -182,10 +183,6 @@ const StudyDetail = () => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    const api = axios.create({
-      baseURL: process.env.REACT_APP_DOMAIN, 
-    });
-  
     try {
       const result = await Swal.fire({
         title: '댓글 삭제',
@@ -229,6 +226,7 @@ const StudyDetail = () => {
       });
   
       setStudyCommentList(detailResponse.data.studyCommentList);
+      setCurrentPage(1); 
     } catch (error) {
       console.error('Error deleting comment:', error);
       Swal.fire({
@@ -238,6 +236,14 @@ const StudyDetail = () => {
       });
     }
   };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const indexOfLastComment = currentPage * commentsPerPage;
+  const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+  const currentComments = studyCommentList.slice(indexOfFirstComment, indexOfLastComment);
 
   if (!studyDetail || !studyGroupLeader || !studyScheduleDetail) {
     return (
@@ -266,12 +272,12 @@ const StudyDetail = () => {
       <Header />
       <Box sx={{ my: 3 }}>
         <Grid container spacing={6}>
-        <Grid item xs={12} md={9}>
+          <Grid item xs={12} md={9}>
             <StyledCard>
               <CardContent>
-              <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteStudy(studyDetail.studyId)}>
-                            <DeleteIcon />
-            </IconButton>
+                <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteStudy(studyDetail.studyId)}>
+                  <DeleteIcon />
+                </IconButton>
                 <Typography variant="h4" component="h1" gutterBottom align="center">
                   {studyDetail.title}
                 </Typography>
@@ -308,77 +314,84 @@ const StudyDetail = () => {
                 </Paper>
 
                 <Box>
-                    <Typography variant="h6" gutterBottom>
-                      댓글 {studyCommentList.length}
-                    </Typography>
-                    <List>
-                      {studyCommentList.map((comment, index) => (
-                        <React.Fragment key={index}>
-                          <ListItem alignItems="flex-start">
-                            <ListItemAvatar>
-                              {comment.anonymous ? <Avatar>익명</Avatar> : (
-                                <Avatar>{comment.nickName[0]}</Avatar> 
-                              )}
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={comment.anonymous ? '익명' : comment.nickName} 
-                              secondary={
-                                <>
-                                  {comment.content}
-                                  <Typography variant="caption" color="text.secondary" display="block">
-                                    {format(new Date(comment.commentDateTime), 'yyyy-MM-dd HH:mm')} {/* Format date */}
-                                  </Typography>
-                                </>
-                              }
-                            />
-                            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteComment(comment.commentId)}>
-                              <DeleteIcon />
-                            </IconButton>
-                          </ListItem>
-                          {index < studyCommentList.length - 1 && <Divider variant="inset" component="li" />}
-                        </React.Fragment>
-                      ))}
-                    </List>
-
-                    <Box component="form" onSubmit={handleCommentSubmit} sx={{ mt: 2 }}>
-                      <TextField
-                        fullWidth
-                        multiline
-                        rows={3}
-                        placeholder="댓글을 입력하세요"
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        variant="outlined"
-                        inputProps={{ maxLength: 300 }}
-                        sx={{ mb: 1 }}
-                      />
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Typography variant="caption" color="text.secondary" sx={{ mr: 2 }}>
-                            {newComment.length}/300
-                          </Typography>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={anonymous}
-                                onChange={(e) => setAnonymous(e.target.checked)}
-                                size="small"
-                              />
+                  <Typography variant="h6" gutterBottom>
+                    댓글 {studyCommentList.length}
+                  </Typography>
+                  <List>
+                    {currentComments.map((comment, index) => (
+                      <React.Fragment key={index}>
+                        <ListItem alignItems="flex-start">
+                          <ListItemAvatar>
+                            {comment.anonymous ? <Avatar>익명</Avatar> : (
+                              <Avatar>{comment.nickName[0]}</Avatar> 
+                            )}
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={comment.anonymous ? '익명' : comment.nickName} 
+                            secondary={
+                              <>
+                                {comment.content}
+                                <Typography variant="caption" color="text.secondary" display="block">
+                                  {format(new Date(comment.commentDateTime), 'yyyy-MM-dd HH:mm')} {/* Format date */}
+                                </Typography>
+                              </>
                             }
-                            label="비밀댓글"
                           />
-                        </Box>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          endIcon={<SendIcon />}
-                          disabled={!newComment.trim()}
-                        >
-                          댓글 등록
-                        </Button>
+                          <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteComment(comment.commentId)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItem>
+                        {index < currentComments.length - 1 && <Divider variant="inset" component="li" />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+
+                  <Pagination
+                    count={Math.ceil(studyCommentList.length / commentsPerPage)}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    sx={{ mt: 2 }}
+                  />
+
+                  <Box component="form" onSubmit={handleCommentSubmit} sx={{ mt: 2 }}>
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={3}
+                      placeholder="댓글을 입력하세요"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      variant="outlined"
+                      inputProps={{ maxLength: 300 }}
+                      sx={{ mb: 1 }}
+                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ mr: 2 }}>
+                          {newComment.length}/300
+                        </Typography>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={anonymous}
+                              onChange={(e) => setAnonymous(e.target.checked)}
+                              size="small"
+                            />
+                          }
+                          label="비밀댓글"
+                        />
                       </Box>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        endIcon={<SendIcon />}
+                        disabled={!newComment.trim()}
+                      >
+                        댓글 등록
+                      </Button>
                     </Box>
                   </Box>
+                </Box>
               </CardContent>
             </StyledCard>
           </Grid>
