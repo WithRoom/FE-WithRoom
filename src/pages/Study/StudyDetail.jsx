@@ -332,7 +332,7 @@ const StudyDetail = () => {
                               <>
                                 {comment.content}
                                 <Typography variant="caption" color="text.secondary" display="block">
-                                  {format(new Date(comment.commentDateTime), 'yyyy-MM-dd HH:mm')} {/* Format date */}
+                                  {format(new Date(comment.commentDateTime), 'yyyy-MM-dd HH:mm')}
                                 </Typography>
                               </>
                             }
@@ -346,12 +346,13 @@ const StudyDetail = () => {
                     ))}
                   </List>
 
-                  <Pagination
-                    count={Math.ceil(studyCommentList.length / commentsPerPage)}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    sx={{ mt: 2 }}
-                  />
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Pagination
+                      count={Math.ceil(studyCommentList.length / commentsPerPage)}
+                      page={currentPage}
+                      onChange={handlePageChange}
+                    />
+                  </Box>
 
                   <Box component="form" onSubmit={handleCommentSubmit} sx={{ mt: 2 }}>
                     <TextField
