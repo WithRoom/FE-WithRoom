@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import { Form, Row, Col } from "react-bootstrap";
 import data from "../../data/전국행정동리스트.json";
 
 const SelectComponent = ({ onCategoryChange, onCityChange, onDistrictChange, onTownChange }) => {
   const [list, setList] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedTown, setSelectedTown] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedTown, setSelectedTown] = useState(null);
   const [filteredCities, setFilteredCities] = useState([]);
   const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [filteredTowns, setFilteredTowns] = useState([]);
@@ -18,16 +19,19 @@ const SelectComponent = ({ onCategoryChange, onCityChange, onDistrictChange, onT
 
   useEffect(() => {
     if (selectedCategory) {
-      const filteredList = list.filter(item => item.Column1 === selectedCategory);
+      const filteredList = list.filter(item => item.Column1 === selectedCategory.value);
       const cities = filteredList
         .map(item => item.Column2)
-        .filter((value, index, self) => value && self.indexOf(value) === index);
+        .filter((value, index, self) => value && self.indexOf(value) === index)
+        .map(city => ({ value: city, label: city }));
       const districts = filteredList
         .map(item => item.Column3)
-        .filter((value, index, self) => value && self.indexOf(value) === index);
+        .filter((value, index, self) => value && self.indexOf(value) === index)
+        .map(district => ({ value: district, label: district }));
       const towns = filteredList
         .map(item => item.Column4)
-        .filter((value, index, self) => value && self.indexOf(value) === index);
+        .filter((value, index, self) => value && self.indexOf(value) === index)
+        .map(town => ({ value: town, label: town }));
 
       setFilteredCities(cities);
       setFilteredDistricts(districts);
@@ -39,28 +43,30 @@ const SelectComponent = ({ onCategoryChange, onCityChange, onDistrictChange, onT
     }
   }, [selectedCategory, list]);
 
-  const handleCategoryChange = (e) => {
-    const value = e.target.value;
-    setSelectedCategory(value);
-    onCategoryChange(value);
+  const handleCategoryChange = (selectedOption) => {
+    setSelectedCategory(selectedOption);
+    onCategoryChange(selectedOption ? selectedOption.value : "");
+    setSelectedCity(null); // Reset dependent fields
+    setSelectedDistrict(null);
+    setSelectedTown(null);
   };
 
-  const handleCityChange = (e) => {
-    const value = e.target.value;
-    setSelectedCity(value);
-    onCityChange(value);
+  const handleCityChange = (selectedOption) => {
+    setSelectedCity(selectedOption);
+    onCityChange(selectedOption ? selectedOption.value : "");
+    setSelectedDistrict(null);
+    setSelectedTown(null);
   };
 
-  const handleDistrictChange = (e) => {
-    const value = e.target.value;
-    setSelectedDistrict(value);
-    onDistrictChange(value);
+  const handleDistrictChange = (selectedOption) => {
+    setSelectedDistrict(selectedOption);
+    onDistrictChange(selectedOption ? selectedOption.value : "");
+    setSelectedTown(null);
   };
 
-  const handleTownChange = (e) => {
-    const value = e.target.value;
-    setSelectedTown(value);
-    onTownChange(value);
+  const handleTownChange = (selectedOption) => {
+    setSelectedTown(selectedOption);
+    onTownChange(selectedOption ? selectedOption.value : "");
   };
 
   return (
@@ -70,17 +76,12 @@ const SelectComponent = ({ onCategoryChange, onCityChange, onDistrictChange, onT
       <Form.Group as={Row} className="mb-3">
         <Form.Label column sm="2">대분류</Form.Label>
         <Col sm="10">
-          <Form.Select
+          <Select
             value={selectedCategory}
             onChange={handleCategoryChange}
-          >
-            <option value="">선택하세요</option>
-            {[...new Set(list.map(item => item.Column1))].map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-          </Form.Select>
+            options={[...new Set(list.map(item => item.Column1))].map(category => ({ value: category, label: category }))}
+            placeholder="선택하세요"
+          />
         </Col>
       </Form.Group>
 
@@ -88,17 +89,12 @@ const SelectComponent = ({ onCategoryChange, onCityChange, onDistrictChange, onT
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm="2">시/군</Form.Label>
           <Col sm="10">
-            <Form.Select
+            <Select
               value={selectedCity}
               onChange={handleCityChange}
-            >
-              <option value="">선택하세요</option>
-              {filteredCities.map((city, index) => (
-                <option key={index} value={city}>
-                  {city}
-                </option>
-              ))}
-            </Form.Select>
+              options={filteredCities}
+              placeholder="선택하세요"
+            />
           </Col>
         </Form.Group>
       )}
@@ -107,17 +103,12 @@ const SelectComponent = ({ onCategoryChange, onCityChange, onDistrictChange, onT
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm="2">구</Form.Label>
           <Col sm="10">
-            <Form.Select
+            <Select
               value={selectedDistrict}
               onChange={handleDistrictChange}
-            >
-              <option value="">선택하세요</option>
-              {filteredDistricts.map((district, index) => (
-                <option key={index} value={district}>
-                  {district}
-                </option>
-              ))}
-            </Form.Select>
+              options={filteredDistricts}
+              placeholder="선택하세요"
+            />
           </Col>
         </Form.Group>
       )}
@@ -126,17 +117,12 @@ const SelectComponent = ({ onCategoryChange, onCityChange, onDistrictChange, onT
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm="2">동/면/리</Form.Label>
           <Col sm="10">
-            <Form.Select
+            <Select
               value={selectedTown}
               onChange={handleTownChange}
-            >
-              <option value="">선택하세요</option>
-              {filteredTowns.map((town, index) => (
-                <option key={index} value={town}>
-                  {town}
-                </option>
-              ))}
-            </Form.Select>
+              options={filteredTowns}
+              placeholder="선택하세요"
+            />
           </Col>
         </Form.Group>
       )}
