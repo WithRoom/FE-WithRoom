@@ -1,5 +1,7 @@
 import React from "react";
 import { Container, Row, Col } from 'react-bootstrap';
+import '../css/Footer.css';
+
 const Footer = () => {  
     return (
         <footer className="footer bg-light py-6 mt-auto">

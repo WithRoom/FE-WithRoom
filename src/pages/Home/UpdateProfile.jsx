@@ -154,9 +154,6 @@ export default function UpdateProfile() {
           <Typography variant="h4" component="h1" gutterBottom>
             추가 정보 입력
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            정보 ㅅ
-          </Typography>
         </Box>
 
         <form onSubmit={formik.handleSubmit}>
