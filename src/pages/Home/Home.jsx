@@ -18,6 +18,10 @@ const Home = () => {
     baseURL: process.env.REACT_APP_DOMAIN,
   });
 
+  if(localStorage.getItem('vercel-toolbar-token')){
+    localStorage.removeItem('vercel-toolbar-token');
+  }
+
   const [nickName, setNickName] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [studies, setStudies] = useState([]);
