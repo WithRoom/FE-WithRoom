@@ -114,8 +114,8 @@ const Home = () => {
       <Header />
       <Container fluid className="px-0">
         <HomeStudyList studies={studies} />
-        <Footer />
       </Container>
+      <Footer />
     </>
   );
 };
