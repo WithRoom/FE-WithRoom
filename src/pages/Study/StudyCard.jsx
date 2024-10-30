@@ -198,25 +198,38 @@ const ActionButton = ({ state, studyId }) => {
   const studyJoin = async () => {
     setLoading(true)
     try {
-      const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/join', { studyId },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
 
-      if (response.data === false) {
-        Swal.fire({
-          icon: 'error',
-          title: '스터디 신청 실패',
-          text: '그룹장이거나 이미 신청한 스터디입니다. 그룹장은 스터디에 참여할 수 없습니다.',
+      const result = await Swal.fire({
+        title: '스터디 신청',
+        text: '해당 스터디를 신청하시겠습니까?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+        confirmButtonColor: '#9da503',
+        cancelButtonColor: '#d33'
+      });  
+
+      if(result.isConfirmed) {
+        const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/join', { studyId },
+          { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
-      } else {
-        Swal.fire({
-          icon: 'success',
-          title: '스터디 신청 완료',
-          showConfirmButton: false,
-          timer: 1500
-        });
+  
+        if (response.data === false) {
+          Swal.fire({
+            icon: 'error',
+            title: '스터디 신청 실패',
+            text: '그룹장이거나 이미 신청한 스터디입니다. 그룹장은 스터디에 참여할 수 없습니다.',
+          });
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: '스터디 신청 완료',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
       }
-
     } catch (error) {
       console.error('Error joining study:', error);
     } finally {
