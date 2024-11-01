@@ -1,13 +1,14 @@
-
 import React from 'react';
-import {Background, LoadingText} from './Style.js';
+import { Background, LoadingText } from './Style.js';
 import Spinner from '../../test/spinner.gif';
 
-export default () => {
-    return (
+const Loading = () => {
+  return (
     <Background>
-       <LoadingText>잠시만 기다려 주세요.</LoadingText>
-        <img src={Spinner} alt="로딩중" width="5%" />
+      <LoadingText>잠시만 기다려 주세요.</LoadingText>
+      <img src={Spinner} alt="로딩중" width="5%" />
     </Background>
-    );
+  );
 };
+
+export default Loading;
