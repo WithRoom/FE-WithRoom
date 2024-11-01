@@ -51,24 +51,24 @@ const Header = ({ setHomeStudyInfoList }) => {
   };
 
   // 검색 기능
-  const search = () => {
+  const search = async () => {
     console.log(searchQuery);
 
     const domain = process.env.REACT_APP_DOMAIN;
 
-    api.get(`${domain}/home/filter/title`, { 
+    const response = await api.get(`${domain}/home/filter/title`, { 
       params: { title: searchQuery },
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((response) => {
-        console.log(response);
-        setHomeStudyInfoList(response.data.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
-        setSearchQuery(''); // 검색 완료 후 검색어 초기화
-      })
-      .catch((error) => {
-        setSearchQuery(''); // 검색 실패 시 검색어 초기화
-        console.error("Error during search:", error);
-      });
+
+    if (response) {
+      console.log(response);
+      setHomeStudyInfoList(response.data.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
+      setSearchQuery(''); // 검색 완료 후 검색어 초기화 
+    }else{
+      setSearchQuery(''); // 검색 실패 시 검색어 초기화
+      console.error("Error during search:", error);
+    }
   };
 
   // Enter 키 입력 시 검색 실행
