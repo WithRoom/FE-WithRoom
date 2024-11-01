@@ -63,7 +63,7 @@ const Header = ({ setHomeStudyInfoList }) => {
 
     if (response) {
       console.log(response);
-      setHomeStudyInfoList(response.data.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
+      setHomeStudyInfoList(response.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
       setSearchQuery(''); // 검색 완료 후 검색어 초기화 
     }else{
       setSearchQuery(''); // 검색 실패 시 검색어 초기화
