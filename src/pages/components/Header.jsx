@@ -27,6 +27,8 @@ const Header = ({ setHomeStudyInfoList }) => {
 
   // 로그인 여부 확인 함수
   const checkAuth = async () => {
+    const domain = process.env.REACT_APP_DOMAIN;
+
     const token = localStorage.getItem('accessToken');
     if (!token) {
       setIsAuthenticated(false);
@@ -34,7 +36,7 @@ const Header = ({ setHomeStudyInfoList }) => {
     }
 
     try {
-      const response = await axios.get('/oauth/login/state', {
+      const response = await axios.get(`${domain}/oauth/login/state`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data.state === false) {
@@ -52,7 +54,9 @@ const Header = ({ setHomeStudyInfoList }) => {
   const search = () => {
     console.log(searchQuery);
 
-    api.get(`/home/filter/title`, { params: { title: searchQuery } })
+    const domain = process.env.REACT_APP_DOMAIN;
+
+    api.get(`${domain}/home/filter/title`, { params: { title: searchQuery } })
       .then((response) => {
         console.log(response);
         setHomeStudyInfoList(response.data.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
