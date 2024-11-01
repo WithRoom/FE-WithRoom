@@ -53,28 +53,25 @@ const Header = ({ setHomeStudyInfoList }) => {
   // 검색 기능
   const search = async () => {
     console.log(searchQuery);
-
+  
     const domain = process.env.REACT_APP_DOMAIN;
-
-    const response = await api.get(`${domain}/home/filter/title`, { 
-      params: { title: searchQuery },
-      headers: { Authorization: `Bearer ${token}` },
-    })
-
-    if (response) {
-      console.log(response);
-      setHomeStudyInfoList(response.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
-      setSearchQuery(''); // 검색 완료 후 검색어 초기화 
-    }else{
+    const token = localStorage.getItem('accessToken'); // 토큰 가져오기
+  
+    try {
+      const response = await api.get(`${domain}/home/filter/title`, { 
+        params: { title: searchQuery },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // API 응답에서 데이터 가져오기
+      if (response && response.data) {
+        console.log(response);
+        setHomeStudyInfoList(response.data.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
+        setSearchQuery(''); // 검색 완료 후 검색어 초기화 
+      }
+    } catch (error) {
       setSearchQuery(''); // 검색 실패 시 검색어 초기화
       console.error("Error during search:", error);
-    }
-  };
-
-  // Enter 키 입력 시 검색 실행
-  const enterKey = (e) => {
-    if (e.key === 'Enter') {
-      search();
     }
   };
 
