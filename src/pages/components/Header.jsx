@@ -75,6 +75,13 @@ const Header = ({ setHomeStudyInfoList }) => {
     }
   };
 
+  // Enter 키 입력 시 검색 실행
+  const enterKey = (e) => {
+    if (e.key === 'Enter') {
+      search();
+    }
+  };
+
   // 로그아웃 기능
   const logout = () => {
     const domain = process.env.REACT_APP_DOMAIN;
