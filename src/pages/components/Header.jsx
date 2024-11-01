@@ -56,7 +56,9 @@ const Header = ({ setHomeStudyInfoList }) => {
 
     const domain = process.env.REACT_APP_DOMAIN;
 
-    api.get(`${domain}/home/filter/title`, { params: { title: searchQuery } })
+    api.get(`${domain}/home/filter/title`, { params: { title: searchQuery } },{
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((response) => {
         console.log(response);
         setHomeStudyInfoList(response.data.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
