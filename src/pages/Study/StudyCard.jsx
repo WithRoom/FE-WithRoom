@@ -6,6 +6,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { StudyContext } from './StudyContext';
 import BeatLoader from 'react-spinners/BeatLoader';
+import Loading from '../components/Loading';
 
 function ApplicantModal({ nickName, preferredArea }) {
   const [show, setShow] = useState(false);
@@ -196,7 +197,6 @@ const ActionButton = ({ state, studyId }) => {
   });
 
   const studyJoin = async () => {
-    setLoading(true)
     try {
 
       const result = await Swal.fire({
@@ -211,10 +211,13 @@ const ActionButton = ({ state, studyId }) => {
       });  
 
       if(result.isConfirmed) {
+        setLoading(true)
         const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/join', { studyId },
           { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
   
+        setLoading(false);  // 로딩 종료
+
         if (response.data === false) {
           Swal.fire({
             icon: 'error',
@@ -238,15 +241,18 @@ const ActionButton = ({ state, studyId }) => {
   };
 
   return (
-    <Button
-      variant="outline-primary"
-      size="sm"
-      onClick={state ? studyJoin : null}
-      disabled={!state}
-    >
-      {state ? "참여하기" : "마감됨"}
-    </Button>
-  );
+    <div>
+        {loading ? <Loading /> : null} 
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={state ? studyJoin : null}
+              disabled={!state}
+            >
+              {state ? "참여하기" : "마감됨"}
+            </Button>
+    </div>
+  )
 };
 
 const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
@@ -345,6 +351,7 @@ const StudyCard = ({ study, cardType }) => {
   const isClosed = study.nowPeople === study.recruitPeople;
 
   return (
+
     <div 
       style={{ position: 'relative', width: '18rem', transition: 'transform 0.2s', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
       onMouseEnter={() => setIsHovered(true)}

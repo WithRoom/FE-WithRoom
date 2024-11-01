@@ -103,13 +103,16 @@ export default function UpdateProfile() {
           }
         });
         const data = response.data;
+
+        console.log('회원 정보 : ' , data)
+
         formik.setValues({
-          name: data.name,
-          nickName: data.nickName,
-          preferredArea: data.preferredArea,
-          interest: data.interest,
+          name: data.name || '',  
+          nickName: data.nickName || '',  
+          preferredArea: data.preferredArea || '', 
+          interest: data.interest || '', 
           areaSelections: {
-            category: '',
+            category: '', 
             city: '',
             district: '',
             town: ''
