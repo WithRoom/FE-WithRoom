@@ -6,7 +6,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { StudyContext } from './StudyContext';
 import BeatLoader from 'react-spinners/BeatLoader';
-import Loading from '../components/Loading';
 
 function ApplicantModal({ nickName, preferredArea }) {
   const [show, setShow] = useState(false);
@@ -193,12 +192,11 @@ const ActionButton = ({ state, studyId }) => {
   const [loading, setLoading] = useState(false);
 
   const api = axios.create({
-    baseURL: process.env.REACT_APP_DOMAIN, 
+    baseURL: process.env.REACT_APP_DOMAIN,
   });
 
   const studyJoin = async () => {
     try {
-
       const result = await Swal.fire({
         title: '스터디 신청',
         text: '해당 스터디를 신청하시겠습니까?',
@@ -208,15 +206,15 @@ const ActionButton = ({ state, studyId }) => {
         cancelButtonText: '취소',
         confirmButtonColor: '#9da503',
         cancelButtonColor: '#d33'
-      });  
+      });
 
-      if(result.isConfirmed) {
-        setLoading(true)
-        const response = await api.post(process.env.REACT_APP_DOMAIN + '/study/join', { studyId },
-          { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      if (result.isConfirmed) {
+        setLoading(true);
+        const response = await api.post('/study/join', { studyId }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
-  
-        setLoading(false);  // 로딩 종료
+
+        setLoading(false); // 로딩 종료
 
         if (response.data === false) {
           Swal.fire({
@@ -242,17 +240,15 @@ const ActionButton = ({ state, studyId }) => {
 
   return (
     <div>
-         {loading && <Loading />}
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={state ? studyJoin : null}
-            disabled={!state}
-          >
-            {state ? "참여하기" : "마감됨"}
-          </Button>
+    <Button variant="outline-primary" size="sm" onClick={state ? studyJoin : null} disabled={!state || loading}>
+      {loading ? (
+        <BeatLoader color="#9da503" loading={loading} size={10} />
+      ) : (
+        "참여하기"
+      )}
+    </Button>
   </div>
-  )
+  );
 };
 
 const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
