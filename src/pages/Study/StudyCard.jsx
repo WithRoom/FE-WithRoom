@@ -242,16 +242,16 @@ const ActionButton = ({ state, studyId }) => {
 
   return (
     <div>
-        {loading ? <Loading /> : null} 
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={state ? studyJoin : null}
-              disabled={!state}
-            >
-              {state ? "참여하기" : "마감됨"}
-            </Button>
-    </div>
+         {loading && <Loading />}
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={state ? studyJoin : null}
+            disabled={!state}
+          >
+            {state ? "참여하기" : "마감됨"}
+          </Button>
+  </div>
   )
 };
 
