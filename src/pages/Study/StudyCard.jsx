@@ -261,24 +261,35 @@ const AcceptRejectButtons = ({ studyId, memberId, onAccept, onReject }) => {
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
+      const result = await Swal.fire({
+        title: '스터디 요청 수락',
+        text: '해당 스터디의 신청자를 수락 하시겠습니까?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+        confirmButtonColor: '#9da503',
+        cancelButtonColor: '#d33'
+      });  
 
-      Swal.fire({
-        icon: 'success',
-        title: '스터디 참여 요청 수락',
-        showConfirmButton: false,
-        timer: 1500
-      });
-      if (onAccept) onAccept();
-
-      window.location.reload();
-    } catch (error) {
-      console.error('Error accepting study join request:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '스터디 참여 요청 수락 실패',
-        text: '오류가 발생했습니다. 다시 시도해주세요.',
-      });
-    }
+      if(result.isConfirmed) {
+        Swal.fire({
+          icon: 'success',
+          title: '스터디 참여 요청 수락',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        if (onAccept) onAccept();
+  
+        window.location.reload();
+        } 
+      }catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: '스터디 참여 요청 수락 실패',
+            text: '오류가 발생했습니다. 다시 시도해주세요.',
+        });
+      }
   };
 
   const handleReject = async () => {
