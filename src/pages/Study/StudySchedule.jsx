@@ -25,14 +25,10 @@ const StudySchedule = ({ studyScheduleDetail, studyId }) => {
         const response = await api.get(process.env.REACT_APP_DOMAIN + `/home/filter/info`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
         });
-
-        console.log('Fetched study info:', response);
         const studyInfoList = response.data.homeStudyInfoList;
         setHomeStudyInfoList(studyInfoList);
 
         const currentStudy = studyInfoList.find((study) => study.studyId === studyId);
-
-        console.log('Current study:', currentStudy);
 
         const currentDate = new Date().toISOString().split('T')[0];
         if (currentDate > studyScheduleDetail.endDay || currentStudy.finish === true) {

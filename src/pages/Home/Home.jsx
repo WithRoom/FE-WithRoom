@@ -10,7 +10,7 @@ import Footer from '../components/Footer';
 import { Card, Button } from 'react-bootstrap';
 import more from '../../images/more.png';
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Search } from 'lucide-react';
 
 
 const Home = () => {
@@ -70,6 +70,7 @@ const Home = () => {
   useEffect(() => {
     checkAuth();
     fetchStudies();
+  
   }, []);
 
   // 인증 상태에 따른 사용자 정보 가져오기
