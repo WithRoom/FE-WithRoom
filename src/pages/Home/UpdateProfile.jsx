@@ -100,8 +100,10 @@ export default function UpdateProfile() {
         return;
       }
 
+      const domain = process.env.REACT_APP_DOMAIN;
+
       try {
-        const response = await api.get(`${token}/member/mypage/info`, {
+        const response = await api.get(`${domain}/member/mypage/info`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
