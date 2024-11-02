@@ -11,7 +11,10 @@ import SwiperComponent from './SwiperComponent';
 
 import '../css/Header.css';
 
-const Header = ({ setHomeStudyInfoList }) => {
+const Header = () => {
+  const [homeStudyInfoList, setHomeStudyInfoList] = useState([]);
+
+
   const api = axios.create({
     baseURL: process.env.REACT_APP_DOMAIN,
   });
@@ -76,7 +79,7 @@ const Header = ({ setHomeStudyInfoList }) => {
         setHomeStudyInfoList(response.data.homeStudyInfoList); // 검색 결과를 Home 컴포넌트로 전달
        
         console.log('homeStudyInfoList', response.data.homeStudyInfoList);
-        navigate('/study/list', { homeStudyInfoList: response.data.homeStudyInfoList }); // 스터디 목록 페이지로 이동
+        navigate('/study/list', { state: { homeStudyInfoList: response.data.homeStudyInfoList } });
         
        
         setSearchQuery(''); // 검색 완료 후 검색어 초기화 
