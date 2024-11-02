@@ -85,6 +85,10 @@ export default function UpdateProfile() {
   });
 
   useEffect(() => {
+    const api = axios.create({
+      baseURL: process.env.REACT_APP_DOMAIN,
+    });
+
     const fetchData = async () => {
       const token = localStorage.getItem('accessToken');
       if (!token) {
@@ -97,7 +101,7 @@ export default function UpdateProfile() {
       }
 
       try {
-        const response = await axios.get('/member/mypage/info', {
+        const response = await api.get(`${token}/member/mypage/info`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
