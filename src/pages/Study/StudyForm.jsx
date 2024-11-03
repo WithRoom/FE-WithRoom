@@ -205,17 +205,21 @@ export default function StudyForm() {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}>
-                {!formData.imagePreview && (
-                  <Button
-                    component="label"
-                    variant="contained"
-                    startIcon={<CloudUploadIcon />}
-                  >
-                    이미지 업로드
-                    <VisuallyHiddenInput type="file" onChange={handleImageChange} />
-                  </Button>
-                )}
-              </Box>
+               {!formData.imagePreview && (
+                <Typography variant="subtitle1" color="textSecondary">
+                  이미지 미리보기가 여기에 표시됩니다.
+                </Typography>
+              )}
+            </Box>
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              sx={{ mt: 2 }}
+            >
+              이미지 업로드
+              <VisuallyHiddenInput type="file" onChange={handleImageChange} />
+            </Button>
             </Grid>
             <Grid item xs={12}>
               <TextField
