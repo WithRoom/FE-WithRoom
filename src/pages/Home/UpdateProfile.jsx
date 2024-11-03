@@ -85,6 +85,10 @@ export default function UpdateProfile() {
   });
 
   useEffect(() => {
+    const api = axios.create({
+      baseURL: process.env.REACT_APP_DOMAIN,
+    });
+
     const fetchData = async () => {
       const token = localStorage.getItem('accessToken');
       if (!token) {
@@ -96,12 +100,15 @@ export default function UpdateProfile() {
         return;
       }
 
+      const domain = process.env.REACT_APP_DOMAIN;
+
       try {
-        const response = await axios.get('/member/mypage/info', {
+        const response = await api.get(`${domain}/member/mypage/info`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
+        console.log('response', response);
         const data = response.data;
 
         console.log('회원 정보 : ' , data)
@@ -272,7 +279,7 @@ function getErrorMessage(error) {
 
 async function saveUser(url, json, token) {
   const api = axios.create({
-    baseURL: 'https://studywithme.store',
+    baseURL: process.env.REACT_APP_DOMAIN,
   });
 
   const response = await api.post(url, json, {
