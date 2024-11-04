@@ -100,7 +100,6 @@ const Header = () => {
   // 로그아웃 기능
   const logout = async () => {
     const domain = process.env.REACT_APP_DOMAIN;
-
     const result = await Swal.fire({
       title: '댓글 삭제',
       text: '삭제하시겠습니까?',
@@ -120,6 +119,7 @@ const Header = () => {
         cancelButton: 'dark-cancel',
       },
     });
+
     if (result.isConfirmed) {
       api.post(`${domain}/oauth/kakao/logout`, {}, {
         headers: {
@@ -156,6 +156,7 @@ const Header = () => {
         text: error.response ? error.response.data : 'Unknown error',
       });
     }
+  }
 
   return (
     <Container className="header-container">
