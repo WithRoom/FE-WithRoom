@@ -24,7 +24,7 @@ const StudyList = () => {
     if (initialStudies.length === 0) {
       fetchAllStudies();
     }
-  }, [initialStudies]);
+  }, []);
 
   const fetchAllStudies = async () => {
     try {
