@@ -101,13 +101,13 @@ const Header = () => {
   const logout = async () => {
     const domain = process.env.REACT_APP_DOMAIN;
     const result = await Swal.fire({
-      title: '댓글 삭제',
-      text: '삭제하시겠습니까?',
+      title: '로그아웃',
+      text: '정말로 로그아웃 하시겠습니까?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: '삭제',
+      confirmButtonText: '로그아웃',
       cancelButtonText: '취소',
       background: '#333', 
       color: '#fff', 
@@ -119,7 +119,7 @@ const Header = () => {
         cancelButton: 'dark-cancel',
       },
     });
-
+  
     if (result.isConfirmed) {
       api.post(`${domain}/oauth/kakao/logout`, {}, {
         headers: {
@@ -149,14 +149,8 @@ const Header = () => {
             text: error.response ? error.response.data : 'Unknown error',
           });
         });
-    }else{
-      Swal.fire({
-        icon: 'error',
-        title: '로그아웃 중 문제가 발생했습니다. 관리자에게 문의해주세요!',
-        text: error.response ? error.response.data : 'Unknown error',
-      });
     }
-  }
+  };
 
   return (
     <Container className="header-container">
