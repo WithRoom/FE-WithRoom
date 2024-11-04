@@ -98,38 +98,64 @@ const Header = () => {
   };
 
   // 로그아웃 기능
-  const logout = () => {
+  const logout = async () => {
     const domain = process.env.REACT_APP_DOMAIN;
 
-    api.post(`${domain}/oauth/kakao/logout`, {}, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-      }
-    })
-      .then((response) => {
-        console.log(response);
-        localStorage.removeItem('accessToken'); // 토큰 제거
-        Swal.fire({
-          icon: 'success',
-          title: '로그아웃 되었습니다.',
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setTimeout(() => {
-          navigate('/home'); // 홈 페이지로 이동
-          window.location.reload(); // 페이지 새로고침
-        }, 1500);
+    const result = await Swal.fire({
+      title: '댓글 삭제',
+      text: '삭제하시겠습니까?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '삭제',
+      cancelButtonText: '취소',
+      background: '#333', 
+      color: '#fff', 
+      customClass: {
+        popup: 'dark-popup',
+        title: 'dark-title',
+        htmlContainer: 'dark-text',
+        confirmButton: 'dark-confirm',
+        cancelButton: 'dark-cancel',
+      },
+    });
+    if (result.isConfirmed) {
+      api.post(`${domain}/oauth/kakao/logout`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
       })
-      .catch((error) => {
-        console.error("Error during logout:", error);
-        Swal.fire({
-          icon: 'error',
-          title: '로그아웃에 실패했습니다.',
-          text: error.response ? error.response.data : 'Unknown error',
+        .then((response) => {
+          console.log(response);
+          localStorage.removeItem('accessToken'); // 토큰 제거
+          Swal.fire({
+            icon: 'success',
+            title: '로그아웃 되었습니다.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          setTimeout(() => {
+            navigate('/home'); // 홈 페이지로 이동
+            window.location.reload(); // 페이지 새로고침
+          }, 1500);
+        })
+        .catch((error) => {
+          console.error("Error during logout:", error);
+          Swal.fire({
+            icon: 'error',
+            title: '로그아웃에 실패했습니다.',
+            text: error.response ? error.response.data : 'Unknown error',
+          });
         });
+    }else{
+      Swal.fire({
+        icon: 'error',
+        title: '로그아웃 중 문제가 발생했습니다. 관리자에게 문의해주세요!',
+        text: error.response ? error.response.data : 'Unknown error',
       });
-  };
+    }
 
   return (
     <Container className="header-container">
@@ -166,7 +192,6 @@ const Header = () => {
         </Row>
       </Row>
 
-      {/* 홈 페이지에서만 CarouselFadeExample 컴포넌트를 표시 */}
       {location.pathname === '/home' && (
         <div className="flex w-full h-auto bg-gray-100 p-3">
          <div className="flex-1 bg-white rounded-xm shadow-md mr-4">
