@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container, Grid, Button, CircularProgress, Typography } from '@mui/material';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
@@ -23,7 +23,6 @@ const FilterHeader = styled.div`
 
 const FilterTitle = styled(Typography)`
   color: #000000;
-  justify-content: space-between;
   font-weight: bold;
   margin-bottom: 0;
 `;
@@ -84,18 +83,14 @@ const StudySearchFilter = ({ updateStudies }) => {
   const [loading, setLoading] = useState(false);
 
   const handleFilterChange = (category, value) => {
-    const newFilters = { ...filters, [category]: filters[category] === value ? '' : value };
-    setFilters(newFilters);
-    onFilterChange(newFilters); 
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [category]: prevFilters[category] === value ? '' : value
+    }));
   };
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
-  };
-
-  const onFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    fetchSearchResults(newFilters);
   };
 
   const resetFilters = () => {
@@ -107,15 +102,13 @@ const StudySearchFilter = ({ updateStudies }) => {
       state: ''
     };
     setFilters(initialFilters);
-    onFilterChange(initialFilters); 
   };
 
-  const fetchSearchResults = (filters) => {
+  const fetchSearchResults = () => {
     const api = axios.create({
       baseURL: process.env.REACT_APP_DOMAIN, 
     });
 
-    console.log(filters);
     setLoading(true);
 
     const filteredParams = Object.fromEntries(
@@ -128,7 +121,6 @@ const StudySearchFilter = ({ updateStudies }) => {
       headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
     })
       .then((response) => {
-        console.log('Search response:', response.data);
         setSearchResults(Array.isArray(response.data.homeStudyInfoList) ? response.data.homeStudyInfoList : []); 
         updateStudies(Array.isArray(response.data.homeStudyInfoList) ? response.data.homeStudyInfoList : []);
       })
@@ -143,12 +135,8 @@ const StudySearchFilter = ({ updateStudies }) => {
   };
 
   const handleSearch = () => {
-    fetchSearchResults(filters);
+    fetchSearchResults();
   };
-
-  useEffect(() => {
-    fetchSearchResults(filters);
-  }, [searchResults]);
 
   return (
     <FilterContainer isCollapsed={isCollapsed}>
