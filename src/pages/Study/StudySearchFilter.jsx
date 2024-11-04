@@ -94,21 +94,16 @@ const StudySearchFilter = ({ updateStudies }) => {
   };
 
   const resetFilters = () => {
-    const initialFilters = {
+    setFilters({
       topic: '',
       difficulty: '',
       weekDay: '',
       type: '',
       state: ''
-    };
-    setFilters(initialFilters);
+    });
   };
 
   const fetchSearchResults = () => {
-    const api = axios.create({
-      baseURL: process.env.REACT_APP_DOMAIN, 
-    });
-
     setLoading(true);
 
     const filteredParams = Object.fromEntries(
@@ -117,7 +112,7 @@ const StudySearchFilter = ({ updateStudies }) => {
 
     const queryString = new URLSearchParams(filteredParams).toString();
 
-    api.get(process.env.REACT_APP_DOMAIN + `/home/filter/info?${queryString}`, {
+    axios.get(`${process.env.REACT_APP_DOMAIN}/home/filter/info?${queryString}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
     })
       .then((response) => {
@@ -132,10 +127,6 @@ const StudySearchFilter = ({ updateStudies }) => {
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  const handleSearch = () => {
-    fetchSearchResults();
   };
 
   return (
@@ -171,7 +162,7 @@ const StudySearchFilter = ({ updateStudies }) => {
               </ResetButton>
             </Grid>
             <Grid item xs={6}>
-              <SearchButton variant="contained" onClick={handleSearch} disabled={loading}>
+              <SearchButton variant="contained" onClick={fetchSearchResults} disabled={loading}>
                 {loading ? <CircularProgress size={24} /> : '검색'}
               </SearchButton>
             </Grid>
