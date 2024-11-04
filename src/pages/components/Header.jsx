@@ -121,14 +121,14 @@ const Header = () => {
     });
   
     if (swalResult.isConfirmed) {
-      try {
-        const apiResult = await api.post(`${domain}/oauth/kakao/logout`, {}, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        });
-  
-        if (apiResult.data === true) {
+      api.post(`/oauth/kakao/logout`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+        .then((response) => {
+          console.log(response);
           localStorage.removeItem('accessToken'); // 토큰 제거
           Swal.fire({
             icon: 'success',
@@ -140,20 +140,15 @@ const Header = () => {
             navigate('/home'); // 홈 페이지로 이동
             window.location.reload(); // 페이지 새로고침
           }, 1500);
-        } else {
+        })
+        .catch((error) => {
+          console.error("Error during logout:", error);
           Swal.fire({
             icon: 'error',
             title: '로그아웃에 실패했습니다.',
-            text: 'Unknown error',
+            text: error.response ? error.response.data : 'Unknown error',
           });
-        }
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: '로그아웃에 실패했습니다.',
-          text: error.response ? error.response.data : 'Unknown error',
         });
-      }
     }
   };
   
