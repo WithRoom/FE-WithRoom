@@ -100,7 +100,7 @@ const Header = () => {
   // 로그아웃 기능
   const logout = async () => {
     const domain = process.env.REACT_APP_DOMAIN;
-    const result = await Swal.fire({
+    const swalResult = await Swal.fire({
       title: '로그아웃',
       text: '정말로 로그아웃 하시겠습니까?',
       icon: 'question',
@@ -109,8 +109,8 @@ const Header = () => {
       cancelButtonColor: '#d33',
       confirmButtonText: '로그아웃',
       cancelButtonText: '취소',
-      background: '#333', 
-      color: '#fff', 
+      background: '#333',
+      color: '#fff',
       customClass: {
         popup: 'dark-popup',
         title: 'dark-title',
@@ -120,26 +120,34 @@ const Header = () => {
       },
     });
   
-    if (result.isConfirmed) {
-      const result = await api.post(`${domain}/oauth/kakao/logout`, {}, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      })
-
-      if(result.data === true) {
-        localStorage.removeItem('accessToken'); // 토큰 제거
-        Swal.fire({
-          icon: 'success',
-          title: '로그아웃 되었습니다.',
-          showConfirmButton: false,
-          timer: 1500
+    if (swalResult.isConfirmed) {
+      try {
+        const apiResult = await api.post(`${domain}/oauth/kakao/logout`, {}, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
         });
-        setTimeout(() => {
-          navigate('/home'); // 홈 페이지로 이동
-          window.location.reload(); // 페이지 새로고침
-        }, 1500);
-      }else{
+  
+        if (apiResult.data === true) {
+          localStorage.removeItem('accessToken'); // 토큰 제거
+          Swal.fire({
+            icon: 'success',
+            title: '로그아웃 되었습니다.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          setTimeout(() => {
+            navigate('/home'); // 홈 페이지로 이동
+            window.location.reload(); // 페이지 새로고침
+          }, 1500);
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: '로그아웃에 실패했습니다.',
+            text: 'Unknown error',
+          });
+        }
+      } catch (error) {
         Swal.fire({
           icon: 'error',
           title: '로그아웃에 실패했습니다.',
@@ -148,6 +156,7 @@ const Header = () => {
       }
     }
   };
+  
 
   return (
     <Container className="header-container">
