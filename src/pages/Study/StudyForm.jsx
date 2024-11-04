@@ -146,6 +146,18 @@ export default function StudyForm() {
           time: formData.time,
         },
       };
+
+      const isFormValid = Object.values(finalFormData.studyInfo).every(field => field) &&
+      Object.values(finalFormData.studySchedule).every(field => field);
+
+      if (!isFormValid) {
+             Swal.fire({
+              icon: 'error',
+               title: '모든 필드를 채워주세요!',
+             });
+       return;
+      }
+
       Swal.fire({
         title: "모든 필드를 다 채우셨나요?",
         text: "스터디 생성 후 수정이 불가능합니다.",
