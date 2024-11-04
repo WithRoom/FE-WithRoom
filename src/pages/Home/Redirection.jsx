@@ -16,7 +16,6 @@ const Redirection = () => {
 
     useEffect(() => {
         let isMounted = true; 
-
         const loginUser = async () => {
             console.log('code:', code);
 
