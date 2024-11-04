@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import StudySearchFilter from './StudySearchFilter';
 import noSearchImg from '../../images/nosearch.png';
 import { useLocation } from 'react-router-dom';
+import { set } from 'date-fns';
 
 const StudyList = () => {
   const location = useLocation();
@@ -23,8 +24,12 @@ const StudyList = () => {
   useEffect(() => {
     if (initialStudies.length === 0) {
       fetchAllStudies();
+      return;
+    }else{
+      setAllStudies(initialStudies);
+      return;
     }
-  }, []);
+  }, [initialStudies]);
 
   const fetchAllStudies = async () => {
     try {
