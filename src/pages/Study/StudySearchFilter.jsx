@@ -147,7 +147,7 @@ const StudySearchFilter = ({ updateStudies }) => {
   };
 
   useEffect(() => {
-    setSearchResults(Array.isArray(response.data.homeStudyInfoList) ? response.data.homeStudyInfoList : []); 
+    fetchSearchResults(filters);
   }, [searchResults]);
 
   return (
