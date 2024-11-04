@@ -121,34 +121,31 @@ const Header = () => {
     });
   
     if (result.isConfirmed) {
-      api.post(`${domain}/oauth/kakao/logout`, {}, {
+      const result = await api.post(`${domain}/oauth/kakao/logout`, {}, {
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-        .then((response) => {
-          console.log(response);
-          localStorage.removeItem('accessToken'); // 토큰 제거
-          Swal.fire({
-            icon: 'success',
-            title: '로그아웃 되었습니다.',
-            showConfirmButton: false,
-            timer: 1500
-          });
-          setTimeout(() => {
-            navigate('/home'); // 홈 페이지로 이동
-            window.location.reload(); // 페이지 새로고침
-          }, 1500);
-        })
-        .catch((error) => {
-          console.error("Error during logout:", error);
-          Swal.fire({
-            icon: 'error',
-            title: '로그아웃에 실패했습니다.',
-            text: error.response ? error.response.data : 'Unknown error',
-          });
+
+      if(result.data === true) {
+        localStorage.removeItem('accessToken'); // 토큰 제거
+        Swal.fire({
+          icon: 'success',
+          title: '로그아웃 되었습니다.',
+          showConfirmButton: false,
+          timer: 1500
         });
+        setTimeout(() => {
+          navigate('/home'); // 홈 페이지로 이동
+          window.location.reload(); // 페이지 새로고침
+        }, 1500);
+      }else{
+        Swal.fire({
+          icon: 'error',
+          title: '로그아웃에 실패했습니다.',
+          text: error.response ? error.response.data : 'Unknown error',
+        });
+      }
     }
   };
 
