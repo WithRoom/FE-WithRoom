@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Grid, Button, CircularProgress, Typography } from '@mui/material';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
@@ -23,6 +23,7 @@ const FilterHeader = styled.div`
 
 const FilterTitle = styled(Typography)`
   color: #000000;
+  justify-content: space-between;
   font-weight: bold;
   margin-bottom: 0;
 `;
@@ -71,6 +72,10 @@ const FilterOption = ({ label, options, selected, onChange }) => (
 );
 
 const StudySearchFilter = ({ updateStudies }) => {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_DOMAIN,
+  });
+  
   const [filters, setFilters] = useState({
     topic: '',
     difficulty: '',
@@ -83,27 +88,34 @@ const StudySearchFilter = ({ updateStudies }) => {
   const [loading, setLoading] = useState(false);
 
   const handleFilterChange = (category, value) => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      [category]: prevFilters[category] === value ? '' : value
-    }));
+    const newFilters = { ...filters, [category]: filters[category] === value ? '' : value };
+    setFilters(newFilters);
+    onFilterChange(newFilters); 
   };
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+  const onFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    fetchSearchResults(newFilters);
+  };
+
   const resetFilters = () => {
-    setFilters({
+    const initialFilters = {
       topic: '',
       difficulty: '',
       weekDay: '',
       type: '',
       state: ''
-    });
+    };
+    setFilters(initialFilters);
+    onFilterChange(initialFilters); 
   };
 
-  const fetchSearchResults = () => {
+  const fetchSearchResults = (filters) => {
+    console.log(filters);
     setLoading(true);
 
     const filteredParams = Object.fromEntries(
@@ -112,10 +124,13 @@ const StudySearchFilter = ({ updateStudies }) => {
 
     const queryString = new URLSearchParams(filteredParams).toString();
 
-    axios.get(`${process.env.REACT_APP_DOMAIN}/home/filter/info?${queryString}`, {
+    const domain = process.env.REACT_APP_DOMAIN;
+
+    api.get(`${domain}/home/filter/info?${queryString}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
     })
       .then((response) => {
+        console.log('Search response:', response.data);
         setSearchResults(Array.isArray(response.data.homeStudyInfoList) ? response.data.homeStudyInfoList : []); 
         updateStudies(Array.isArray(response.data.homeStudyInfoList) ? response.data.homeStudyInfoList : []);
       })
@@ -128,6 +143,14 @@ const StudySearchFilter = ({ updateStudies }) => {
         setLoading(false);
       });
   };
+
+  const handleSearch = () => {
+    fetchSearchResults(filters);
+  };
+
+  useEffect(() => {
+    console.log('Search results updated:', searchResults);
+  }, [searchResults]);
 
   return (
     <FilterContainer isCollapsed={isCollapsed}>
@@ -162,7 +185,7 @@ const StudySearchFilter = ({ updateStudies }) => {
               </ResetButton>
             </Grid>
             <Grid item xs={6}>
-              <SearchButton variant="contained" onClick={fetchSearchResults} disabled={loading}>
+              <SearchButton variant="contained" onClick={handleSearch} disabled={loading}>
                 {loading ? <CircularProgress size={24} /> : '검색'}
               </SearchButton>
             </Grid>
