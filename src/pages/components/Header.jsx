@@ -119,6 +119,8 @@ const Header = () => {
         cancelButton: 'dark-cancel',
       },
     });
+
+    console.log(swalResult);
   
     if (swalResult.isConfirmed) {
       api.post(`/oauth/kakao/logout`, {}, {
@@ -155,38 +157,38 @@ const Header = () => {
 
   return (
     <Container className="header-container">
-      <Row>
-        <Col md={4} className="title-section">
-          <Link to="/home" className="nav-link me-3" style={{ display: 'inline-block' }}>
-            <h1 className="main-title">WITH ROOM</h1>
-            <p className="subtitle">스터디하는 공간, 우리가 만들다</p>
-          </Link>
-        </Col>
-        <Col md={4} className="search-section">
-          <div className="search-bar-container">
-            <FormControl
-              type="search"
-              placeholder="search"
-              className="search-input"
-              aria-label="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={enterKey} // onKeyPress 대신 onKeyDown 사용
-            />
-            <Button variant="outline-secondary" className="search-btn" onClick={search}>
-              <i className="bi bi-search"></i>
-            </Button>
-            <i className="bi bi-filter"></i>
-          </div>
-        </Col>
-        <Col md={4} className="d-flex justify-content-end">
-          <button className="px-4 py-2 rounded-full mb-4" onClick={logout}>
-            <img src={logoutImg} alt="logout" style={{ width: '30px', height: '30px' }} />
-          </button>
-        </Col>
-        <Row>
-        </Row>
-      </Row>
+      <Row className="align-items-center d-flex">
+            <Col className="title-section">
+              <Link to="/home" className="nav-link me-3" style={{ display: 'inline-block' }}>
+                <h1 className="main-title">WITH ROOM</h1>
+                <p className="subtitle">스터디하는 공간, 우리가 만들다</p>
+              </Link>
+            </Col>
+            
+            <Col className="search-section">
+              <div className="search-bar-container">
+                <FormControl
+                  type="search"
+                  placeholder="search"
+                  className="search-input"
+                  aria-label="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={enterKey} // onKeyPress 대신 onKeyDown 사용
+                />
+                <Button variant="outline-secondary" className="search-btn" onClick={search}>
+                  <i className="bi bi-search"></i>
+                </Button>
+                <i className="bi bi-filter"></i>
+              </div>
+            </Col>
+            
+            <Col className="d-flex justify-content-end">
+              <button className="px-4 py-2 rounded-full mb-4" onClick={logout}>
+                <img src={logoutImg} alt="logout" style={{ width: '30px', height: '30px' }} />
+              </button>
+            </Col>
+          </Row>
 
       {location.pathname === '/home' && (
         <div className="flex w-full h-auto bg-gray-100 p-3">
