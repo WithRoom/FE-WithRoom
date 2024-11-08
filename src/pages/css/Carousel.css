@@ -1,0 +1,36 @@
+.carousel-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 15px; /* Adds padding for mobile screens */
+  }
+  
+  .carousel-container .carousel-item img {
+    max-height: 300px; /* Set a maximum height for smaller screens */
+    object-fit: cover; /* Ensures the image scales well */
+  }
+  
+  /* Media Queries for Smaller Screens */
+  @media (max-width: 576px) {
+    .carousel-container .carousel-item img {
+      max-height: 200px; /* Smaller height on extra-small screens */
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .carousel-container {
+      max-width: 720px;
+    }
+  }
+  
+  @media (min-width: 992px) {
+    .carousel-container {
+      max-width: 960px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .carousel-container {
+      max-width: 1140px;
+    }
+  }
+  

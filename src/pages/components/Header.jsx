@@ -190,55 +190,39 @@ const Header = () => {
             </Col>
           </Row>
 
+
+      {/* 홈 페이지에서만 CarouselFadeExample 컴포넌트를 표시 */}
       {location.pathname === '/home' && (
         <div className="flex w-full h-auto bg-gray-100 p-3">
-         <div className="flex-1 bg-white rounded-xm shadow-md mr-4">
-            <CarouselFadeExample />
-          </div>
-
-          <div className="w-1/3 bg-white rounded-lg flex flex-col  items-center">
-            <div>
-            <div className="bg-yellow-300 p-4 text-center">
-                <h2 className="text-xl font-bold mb-4 ">
-                  ※서비스 이용에 관한 문의는 아래 채널을 통해 가능합니다.※
-                </h2>
-                <a 
-                  href="http://pf.kakao.com/_xdxbzIn" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="block bg-white rounded-lg p-4 hover:bg-gray-100 transition"
-                >
-                  <div className="flex items-center">
-                    <div className="bg-black text-white rounded-full w-100 h-8 flex items-center justify-center mr-1">
-                      WithRoom 카카오 채널 이동하기
-                    </div>
-                  </div>
-                </a>
-              </div>
-              
-            </div>
-            <div>
-              {isAuthenticated && (
-                <Link to="/study" className="nav-link me-3" style={{ display: 'inline-block' }}>
-                  <p className="text-gray-500">스터디 만들러 가볼까요?</p>
-                </Link>
-              )}
-            </div>
-            <div>
-              <Link to="/me" className="nav-link me-3" style={{ display: 'inline-block' }}>
-                <img src={meImg} alt="me" style={{ width: '200px', height: '200px' }} />
-              </Link>
-            </div>
-            {!isAuthenticated && 
-              (
-              <Link to="/login">
-                <button className="px-4 py-2 rounded-full mb-2">
-                  <img src={kakaoimg} alt="kakao" style={{ width: 'auto', height: 'auto' }} />
-                </button>
-              </Link>
-            )}
-          </div>
-        </div>
+        <div className="flex-1 bg-white rounded-xm shadow-md mr-4">
+           <CarouselFadeExample />
+         </div>
+        
+         <div className="w-1/3 bg-white rounded-lg flex flex-col  items-center">
+           <div>
+           </div>
+           <div>
+             {isAuthenticated && (
+               <Link to="/study" className="nav-link me-3" style={{ display: 'inline-block' }}>
+                 <p className="text-gray-500">스터디 만들러 가볼까요?</p>
+               </Link>
+             )}
+           </div>
+           <div>
+             <Link to="/me" className="nav-link me-3" style={{ display: 'inline-block' }}>
+               <img src={meImg} alt="me" style={{ width: '200px', height: '200px' }} />
+             </Link>
+           </div>
+           {!isAuthenticated && 
+             (
+                  <Link to="/login">
+                    <button className="px-4 py-2 rounded-full mb-2">
+                      <img src={kakaoimg} alt="kakao" style={{ width: 'auto', height: 'auto' }} />
+                    </button>
+                  </Link>
+           )}
+         </div>
+       </div>
       )}
     </Container>
   );
