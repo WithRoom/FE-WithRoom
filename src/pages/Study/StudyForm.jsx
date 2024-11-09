@@ -1,24 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Container,
-  Paper,
-  Grid,
-  Button,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Typography,
-  Box,
-  Chip,
-  Stack,
-  Stepper,
-  Step,
-  StepLabel
+  Container, Paper, Typography, Stepper, Step, StepLabel, 
+  Grid, Box, Button, TextField, FormControl, InputLabel,
+  Select, MenuItem, Stack, Chip, RadioGroup, FormControlLabel,
+  Radio, useTheme, useMediaQuery
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -46,6 +31,9 @@ export default function StudyForm() {
   const api = axios.create({
     baseURL: process.env.REACT_APP_DOMAIN, 
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
@@ -198,15 +186,15 @@ export default function StudyForm() {
     }
   };
 
-  const getStepContent = (step) => {
-    switch (step) {
+  const getStepContent = (activeStep) => {
+    switch (activeStep) {
       case 0:
         return (
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Box sx={{ 
                 width: '100%', 
-                height: 200, 
+                height: isMobile ? 150 : 200,
                 border: '2px dashed #ccc',
                 borderRadius: 2,
                 display: 'flex',
@@ -217,21 +205,18 @@ export default function StudyForm() {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}>
-               {!formData.imagePreview && (
-                <Typography variant="subtitle1" color="textSecondary">
-                  이미지 미리보기가 여기에 표시됩니다.
-                </Typography>
-              )}
-            </Box>
-            <Button
-              component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-              sx={{ mt: 2 }}
-            >
-              이미지 업로드
-              <VisuallyHiddenInput type="file" onChange={handleImageChange} />
-            </Button>
+                {!formData.imagePreview && (
+                  <Button
+                    component="label"
+                    variant="contained"
+                    startIcon={<CloudUploadIcon />}
+                    size={isMobile ? "small" : "medium"}
+                  >
+                    이미지 업로드
+                    <VisuallyHiddenInput type="file" onChange={handleImageChange} />
+                  </Button>
+                )}
+              </Box>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -240,7 +225,7 @@ export default function StudyForm() {
                 value={formData.title}
                 onChange={handleChange('title')}
                 helperText={`${formData.title.length}/50`}
-                placeholder="스터디 제목을 입력해주세요." 
+                size={isMobile ? "small" : "medium"}
               />
             </Grid>
             <Grid item xs={12}>
@@ -250,29 +235,31 @@ export default function StudyForm() {
                 value={formData.kakaoOpenChatUrl}
                 onChange={handleChange('kakaoOpenChatUrl')}
                 placeholder='카카오 오픈 채팅 URL을 입력해주세요.'
+                size={isMobile ? "small" : "medium"}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>스터디 유형</InputLabel>
                 <Select
                   value={formData.type}
                   onChange={handleChange('type')}
                   label="스터디 유형"
+                  size={isMobile ? "small" : "medium"}
                 >
                   <MenuItem value="offline">오프라인</MenuItem>
                   <MenuItem value="online">온라인</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="모집 인원"
                 type="number"
                 value={formData.memberCount}
                 onChange={handleChange('memberCount')}
-                placeholder="모집 인원을 입력해주세요." 
+                size={isMobile ? "small" : "medium"}
               />
             </Grid>
             <Grid item xs={12}>
@@ -282,6 +269,7 @@ export default function StudyForm() {
                   value={formData.topic}
                   onChange={handleChange('topic')}
                   label="스터디 주제"
+                  size={isMobile ? "small" : "medium"}
                 >
                   {studyTopics.map((topic) => (
                     <MenuItem key={topic} value={topic}>{topic}</MenuItem>
@@ -296,7 +284,17 @@ export default function StudyForm() {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>스터디 요일</Typography>
-              <Stack direction="row" spacing={1}>
+              <Stack 
+                direction={isMobile ? "row" : "row"} 
+                spacing={1} 
+                sx={{ 
+                  flexWrap: 'wrap',
+                  gap: 1,
+                  '& .MuiChip-root': {
+                    margin: isMobile ? '2px' : '4px',
+                  }
+                }}
+              >
                 {daysOfWeek.map((day) => (
                   <Chip
                     key={day}
@@ -304,41 +302,41 @@ export default function StudyForm() {
                     onClick={() => handleDayToggle(day)}
                     color={formData.days.includes(day) ? "primary" : "default"}
                     variant={formData.days.includes(day) ? "filled" : "outlined"}
+                    size={isMobile ? "small" : "medium"}
                   />
                 ))}
               </Stack>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="시작일"
                 type="date"
                 value={formData.startDate}
                 onChange={handleChange('startDate')}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
+                size={isMobile ? "small" : "medium"}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="종료일"
                 type="date"
                 value={formData.endDate}
                 onChange={handleChange('endDate')}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
+                size={isMobile ? "small" : "medium"}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>스터디 시간</InputLabel>
                 <Select
                   value={formData.time}
                   onChange={handleChange('time')}
                   label="스터디 시간"
+                  size={isMobile ? "small" : "medium"}
                 >
                   {timeSlots.map((slot) => (
                     <MenuItem key={slot} value={slot}>{slot}</MenuItem>
@@ -346,13 +344,14 @@ export default function StudyForm() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>스터디 기간</InputLabel>
                 <Select
                   value={formData.duration}
                   onChange={handleChange('duration')}
-                  label="스터디 시간"
+                  label="스터디 기간"
+                  size={isMobile ? "small" : "medium"}
                 >
                   {periodSlots.map((slot) => (
                     <MenuItem key={slot} value={slot}>{slot}</MenuItem>
@@ -370,20 +369,27 @@ export default function StudyForm() {
               <ReactQuill
                 value={formData.description}
                 onChange={(value) => setFormData({ ...formData, description: value })}
-                style={{ height: '200px', marginBottom: '50px' }}
-                placeholder="스터디 소개를 입력해주세요. 예시: 프로젝트 목적, 진행 방식, 모집 방식 등"
+                style={{ 
+                  height: isMobile ? '150px' : '200px', 
+                  marginBottom: isMobile ? '30px' : '50px' 
+                }}
               />
             </Grid>
-            <Grid item xs={12}>
-              <FormControl component="fieldset">
-                <Typography variant="subtitle1" gutterBottom>난이도</Typography>
+            <Grid item xs={12} sx={{ pt: 12 }}>
+              <FormControl component="fieldset" sx={{ pt: isMobile ? 2 : 0 }}>
+              <Typography variant="subtitle1" gutterBottom>난이도</Typography>
                 <RadioGroup
                   row
                   value={formData.difficulty}
                   onChange={handleChange('difficulty')}
                 >
                   {['초급', '중급', '고급'].map((level) => (
-                    <FormControlLabel key={level} value={level} control={<Radio />} label={level} />
+                    <FormControlLabel 
+                      key={level} 
+                      value={level} 
+                      control={<Radio size={isMobile ? "small" : "medium"} />} 
+                      label={level} 
+                    />
                   ))}
                 </RadioGroup>
               </FormControl>
@@ -395,6 +401,7 @@ export default function StudyForm() {
                 value={formData.searchTags}
                 onChange={handleChange('searchTags')}
                 helperText="쉼표로 구분하여 최대 5개까지 입력 가능"
+                size={isMobile ? "small" : "medium"}
               />
             </Grid>
           </Grid>
@@ -405,26 +412,68 @@ export default function StudyForm() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Paper sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>스터디 만들기</Typography>
-        <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+    <Container maxWidth="md" sx={{ 
+      mt: isMobile ? 2 : 4, 
+      mb: isMobile ? 2 : 4,
+      px: isMobile ? 1 : 3 
+    }}>
+      <Paper sx={{ 
+        p: isMobile ? 2 : 4,
+        borderRadius: isMobile ? 2 : 3 
+      }}>
+        <Typography 
+          variant={isMobile ? "h5" : "h4"} 
+          gutterBottom
+          sx={{ mb: isMobile ? 2 : 3 }}
+        >
+          스터디 만들기
+        </Typography>
+        <Stepper 
+          activeStep={activeStep} 
+          sx={{ 
+            mb: isMobile ? 2 : 4,
+            display: isMobile ? 'none' : 'flex' // 모바일에서는 Stepper 숨기기
+          }}
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
+        
+        {isMobile && (
+          <Typography 
+            variant="subtitle1" 
+            sx={{ mb: 2, color: 'text.secondary' }}
+          >
+            Step {activeStep + 1} of {steps.length}: {steps[activeStep]}
+          </Typography>
+        )}
+
         {getStepContent(activeStep)}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          mt: isMobile ? 2 : 3,
+          pt: 2,
+          borderTop: '1px solid',
+          borderColor: 'divider'
+        }}>
           {activeStep !== 0 && (
-            <Button onClick={handleBack} sx={{ mr: 1 }}>
+            <Button 
+              onClick={handleBack}
+              size={isMobile ? "small" : "medium"}
+            >
               이전
             </Button>
           )}
           <Button
             variant="contained"
             onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
+            size={isMobile ? "small" : "medium"}
+            sx={{ ml: 'auto' }}
           >
             {activeStep === steps.length - 1 ? '제출하기' : '다음'}
           </Button>
