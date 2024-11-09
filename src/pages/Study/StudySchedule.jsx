@@ -99,38 +99,82 @@ const StudySchedule = ({ studyScheduleDetail, studyId }) => {
           </Box>
         </Card.Header>
 
-      <Card.Body className="p-4">
-        <div className="d-flex justify-content-between mb-4">
-          {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => (
-            <div
-              key={index}
-              className={`w-8 h-8 d-flex align-items-center justify-content-center 
-                ${studyScheduleDetail.weekDay.includes(day) 
-                ? 'rounded-circle bg-primary text-white' : ''}`}
-            >
-              {day}
-            </div>
-          ))}
-        </div>
-        <div className="space-y-2">
-          <div className="d-flex justify-content-between">
-            <span className="text-primary">시작일</span>
-            <span>{studyScheduleDetail.startDay}</span>
-          </div>
-          <div className="d-flex justify-content-between">
-            <span>시간</span>
-            <span>{studyScheduleDetail.time}</span>
-          </div>
-          <div className="d-flex justify-content-between">
-            <span>모집 인원</span>
-            <span>{studyScheduleDetail.nowPeople}/{studyScheduleDetail.recruitPeople}</span>
-          </div>
-          <div className="d-flex justify-content-between">
-            <span>마감일</span>
-            <span>{studyScheduleDetail.endDay}</span>
-          </div>
-        </div>
-      </Card.Body>
+        <Card.Body className="p-4">
+              {/* 요일 선택 섹션 - 웹 버전 */}
+              <div className="hidden md:flex justify-content-between mb-4">
+                {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => (
+                  <div
+                    key={index}
+                    className={`w-8 h-8 d-flex align-items-center justify-content-center 
+                      ${studyScheduleDetail.weekDay.includes(day) 
+                      ? 'rounded-circle bg-primary text-white' : ''}`}
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              {/* 요일 선택 섹션 - 모바일 버전 */}
+              <div className="md:hidden mb-4">
+                <div className="grid grid-cols-7 gap-2">
+                  {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => (
+                    <div
+                      key={index}
+                      className={`aspect-square flex items-center justify-center text-sm
+                        ${studyScheduleDetail.weekDay.includes(day)
+                        ? 'rounded-full bg-primary text-white'
+                        : 'rounded-full border border-gray-200'}`}
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 스케줄 정보 섹션 - 웹 버전 */}
+              <div className="hidden md:block space-y-2">
+                <div className="d-flex justify-content-between">
+                  <span className="text-primary">시작일</span>
+                  <span>{studyScheduleDetail.startDay}</span>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <span>시간</span>
+                  <span>{studyScheduleDetail.time}</span>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <span>모집 인원</span>
+                  <span>{studyScheduleDetail.nowPeople}/{studyScheduleDetail.recruitPeople}</span>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <span>마감일</span>
+                  <span>{studyScheduleDetail.endDay}</span>
+                </div>
+              </div>
+
+              {/* 스케줄 정보 섹션 - 모바일 버전 */}
+              <div className="md:hidden mt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="text-sm text-primary mb-1">시작일</div>
+                    <div className="font-medium">{studyScheduleDetail.startDay}</div>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="text-sm mb-1">시간</div>
+                    <div className="font-medium">{studyScheduleDetail.time}</div>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="text-sm mb-1">모집 인원</div>
+                    <div className="font-medium">
+                      {studyScheduleDetail.nowPeople}/{studyScheduleDetail.recruitPeople}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="text-sm mb-1">마감일</div>
+                    <div className="font-medium">{studyScheduleDetail.endDay}</div>
+                  </div>
+                </div>
+              </div>
+            </Card.Body>
     </Card>
   );
 };
