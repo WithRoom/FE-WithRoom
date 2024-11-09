@@ -157,73 +157,72 @@ const Header = () => {
 
   return (
     <Container className="header-container">
-      <Row className="align-items-center d-flex">
-            <Col className="title-section">
-              <Link to="/home" className="nav-link me-3" style={{ display: 'inline-block' }}>
-                <h1 className="main-title">WITH ROOM</h1>
-                <p className="subtitle">스터디하는 공간, 우리가 만들다</p>
-              </Link>
-            </Col>
-            
-            <Col className="search-section">
-              <div className="search-bar-container">
-                <FormControl
-                  type="search"
-                  placeholder="search"
-                  className="search-input"
-                  aria-label="Search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={enterKey} // onKeyPress 대신 onKeyDown 사용
-                />
-                <Button variant="outline-secondary" className="search-btn" onClick={search}>
-                  <i className="bi bi-search"></i>
-                </Button>
-                <i className="bi bi-filter"></i>
-              </div>
-            </Col>
-            
-            <Col className="d-flex justify-content-end">
-              <button className="px-4 py-2 rounded-full mb-4" onClick={logout}>
-                <img src={logoutImg} alt="logout" style={{ width: '30px', height: '30px' }} />
-              </button>
-            </Col>
-          </Row>
+      <Row className="align-items-center d-flex flex-column flex-md-row">
+        <Col className="title-section text-center text-md-start mb-3 mb-md-0">
+          <Link to="/home" className="nav-link me-3" style={{ display: 'inline-block' }}>
+            <h1 className="main-title">WITH ROOM</h1>
+            <p className="subtitle">스터디하는 공간, 우리가 만들다</p>
+          </Link>
+        </Col>
+  
+          <Col className="search-section d-flex justify-content-center mb-3 mb-md-0">
+            <div className="search-bar-container">
+              <FormControl
+                type="search"
+                placeholder="search"
+                className="search-input"
+                aria-label="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={enterKey}
+              />
+              <Button variant="outline-secondary" className="search-btn" onClick={search}>
+                <i className="bi bi-search"></i>
+              </Button>
+              <i className="bi bi-filter"></i>
+            </div>
+          </Col>
+          
+          <Col className="d-flex justify-content-center justify-content-md-end">
+            <button className="px-4 py-2 rounded-full" onClick={logout}>
+              <img src={logoutImg} alt="logout" style={{ width: '30px', height: '30px' }} />
+            </button>
+          </Col>
+        </Row>
 
 
       {/* 홈 페이지에서만 CarouselFadeExample 컴포넌트를 표시 */}
       {location.pathname === '/home' && (
-        <div className="flex w-full h-auto bg-gray-100 p-3">
-        <div className="flex-1 bg-white rounded-xm shadow-md mr-4">
-           <CarouselFadeExample />
-         </div>
-        
-         <div className="w-1/3 bg-white rounded-lg flex flex-col  items-center">
-           <div>
-           </div>
-           <div>
-             {isAuthenticated && (
-               <Link to="/study" className="nav-link me-3" style={{ display: 'inline-block' }}>
-                 <p className="text-gray-500">스터디 만들러 가볼까요?</p>
-               </Link>
-             )}
-           </div>
-           <div>
-             <Link to="/me" className="nav-link me-3" style={{ display: 'inline-block' }}>
-               <img src={meImg} alt="me" style={{ width: '200px', height: '200px' }} />
-             </Link>
-           </div>
-           {!isAuthenticated && 
-             (
+            <div className="flex flex-col md:flex-row w-full h-auto bg-gray-100 p-3">
+              <div className="flex-1 bg-white rounded-xm shadow-md mb-4 md:mb-0 md:mr-4">
+                <CarouselFadeExample />
+              </div>
+
+              <div className="w-full md:w-1/3 bg-white rounded-lg flex flex-col items-center">
+                <div>
+                  {isAuthenticated && (
+                    <Link to="/study" className="nav-link me-3" style={{ display: 'inline-block' }}>
+                      <p className="text-gray-500">스터디 만들러 가볼까요?</p>
+                    </Link>
+                  )}
+                </div>
+
+                <div>
+                  <Link to="/me" className="nav-link me-3" style={{ display: 'inline-block' }}>
+                    <img src={meImg} alt="me" style={{ width: '200px', height: '200px' }} />
+                  </Link>
+                </div>
+
+                {!isAuthenticated && (
                   <Link to="/login">
                     <button className="px-4 py-2 rounded-full mb-2">
                       <img src={kakaoimg} alt="kakao" style={{ width: 'auto', height: 'auto' }} />
                     </button>
                   </Link>
-           )}
-         </div>
-       </div>
-      )}
+                )}
+              </div>
+            </div>
+          )}
     </Container>
   );
 };
