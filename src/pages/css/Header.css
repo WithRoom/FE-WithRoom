@@ -1,7 +1,6 @@
 /* 공통 스타일 */
 .header-container {
   padding: 20px;
-  border-bottom: 1px solid #ddd;
   text-align: left;
   width: 100%;
 }
