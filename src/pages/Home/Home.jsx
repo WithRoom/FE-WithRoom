@@ -85,33 +85,65 @@ const Home = () => {
 
   // 스터디 목록 컴포넌트
   const HomeStudyList = ({ studies }) => (
-    <Container>
-      <Row>
+    <div className="container mx-auto px-4">
+      {/* 모바일용 가로 스크롤 레이아웃 */}
+      <div className="md:hidden w-full overflow-x-auto scrollbar-hide">
+        <div className="flex space-x-4 pb-4 px-1">
+          {Array.isArray(studies) && studies.length > 0 ? (
+            studies.slice(0, 7).map((study) => (
+              <div key={study.studyId} className="flex-none w-[280px]">
+                <StudyCard study={study} />
+              </div>
+            ))
+          ) : (
+            <div className="w-full">
+              <p>스터디가 없습니다.</p>
+            </div>
+          )}
+          
+          {studies.length > 6 && (
+            <div className="flex-none w-[280px]">
+              <Link to="/study/list">
+                <div className="bg-white rounded-lg p-4 flex flex-col items-center justify-center h-full cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200">
+                  <ChevronRight className="w-12 h-12 text-blue-500 mb-3" />
+                  <p className="text-lg font-bold text-center text-gray-800">
+                    스터디를 더 보러 가볼까요?
+                  </p>
+                </div>
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 태블릿/데스크톱용 그리드 레이아웃 */}
+      <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 gap-4">
         {Array.isArray(studies) && studies.length > 0 ? (
           studies.slice(0, 7).map((study) => (
-            <Col key={study.studyId} md={3} className="mb-3">
+            <div key={study.studyId}>
               <StudyCard study={study} />
-            </Col>
+            </div>
           ))
         ) : (
-          <Col md={12} className="mb-3">
-           
-          </Col>
+          <div className="col-span-full">
+            <p>스터디가 없습니다.</p>
+          </div>
         )}
+        
         {studies.length > 6 && (
-          <Col>
+          <div>
             <Link to="/study/list">
-              <div className="bg-white rounded-lg p-4 flex flex-col items-center justify-center h-full cursor-pointer border:1px">
+              <div className="bg-white rounded-lg p-4 flex flex-col items-center justify-center h-full cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200">
                 <ChevronRight className="w-12 h-12 text-blue-500 mb-3" />
                 <p className="text-lg font-bold text-center text-gray-800">
                   스터디를 더 보러 가볼까요?
                 </p>
               </div>
             </Link>
-          </Col>
+          </div>
         )}
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 
   return (
