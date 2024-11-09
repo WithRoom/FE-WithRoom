@@ -356,8 +356,18 @@ const StudyCard = ({ study, cardType }) => {
       <Card className="mb-3" style={{ width: '100%', borderRadius: '15px', border: '1px solid lightgray' }}>
         <Card.Body>
           <div className="d-flex justify-content-between align-items-start">
-            <Card.Title>{study.title}</Card.Title>
-            <LikeButton isLiked={isLiked} setIsLiked={setIsLiked} studyId={study.studyId} />
+            <Card.Title style={{
+              whiteSpace: 'nowrap',       // Prevents the text from wrapping
+              overflow: 'hidden',         // Hides the overflowed content
+              textOverflow: 'ellipsis',   // Adds ellipsis (...) at the end if the text overflows
+              maxWidth: 'calc(100% - 40px)',  // Adjusts width to avoid overlap with the like button
+              margin: 0
+            }}>
+              {study.title}
+            </Card.Title>            
+            <div className="ml-auto">
+              <LikeButton isLiked={isLiked} setIsLiked={setIsLiked} studyId={study.studyId} />
+            </div>          
           </div>
           <div onClick={handleCardClick} style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
             <StudyImage src={study.studyImageUrl} />
