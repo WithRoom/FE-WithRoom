@@ -97,7 +97,7 @@ const Home = () => {
             ))
           ) : (
             <div className="w-full">
-              <p>스터디가 없습니다.</p>
+
             </div>
           )}
           

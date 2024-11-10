@@ -349,69 +349,83 @@ const StudyCard = ({ study, cardType }) => {
   return (
 
     <div 
-      style={{ position: 'relative', width: '18rem', transition: 'transform 0.2s', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
+      className={`relative w-full md:w-72 transition-transform duration-200 ${
+        isHovered ? 'md:scale-105' : 'scale-100'
+      }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Card className="mb-3" style={{ width: '100%', borderRadius: '15px', border: '1px solid lightgray' }}>
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-start">
-            <Card.Title style={{
-              whiteSpace: 'nowrap',       // Prevents the text from wrapping
-              overflow: 'hidden',         // Hides the overflowed content
-              textOverflow: 'ellipsis',   // Adds ellipsis (...) at the end if the text overflows
-              maxWidth: 'calc(100% - 40px)',  // Adjusts width to avoid overlap with the like button
-              margin: 0
-            }}>
+      <Card className="w-full border rounded-xl border-gray-200 mb-3">
+        <div className="p-4">
+          {/* Header Section */}
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="text-lg font-semibold truncate pr-2 m-0">
               {study.title}
-            </Card.Title>            
-            <div className="ml-auto">
-              <LikeButton isLiked={isLiked} setIsLiked={setIsLiked} studyId={study.studyId} />
-            </div>          
+            </h3>
+            <div className="flex-shrink-0">
+              <LikeButton 
+                isLiked={isLiked} 
+                setIsLiked={setIsLiked} 
+                studyId={study.studyId}
+              />
+            </div>
           </div>
-          <div onClick={handleCardClick} style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
+
+          {/* Image Section */}
+          <div 
+            onClick={handleCardClick}
+            className="cursor-pointer mb-3"
+          >
             <StudyImage src={study.studyImageUrl} />
           </div>
-          <Tags tags={study.topic} />
-          <Difficulty difficulty={study.difficulty} />
-          <OnlineStatus type={study.type} />
-          <div className="d-flex justify-content-between align-items-center">
-            <RecruitmentInfo nowPeople={study.nowPeople} recruitPeople={study.recruitPeople} />
+
+          {/* Tags Section - Horizontal scroll on mobile */}
+          <div className="flex gap-2 overflow-x-auto mb-2 pb-1 scrollbar-hide">
+            <Tags tags={study.topic} />
+          </div>
+
+          {/* Info Section */}
+          <div className="space-y-2">
+            <Difficulty difficulty={study.difficulty} />
+            <OnlineStatus type={study.type} />
+          </div>
+
+          {/* Bottom Section */}
+          <div className="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <RecruitmentInfo 
+              nowPeople={study.nowPeople} 
+              recruitPeople={study.recruitPeople} 
+            />
+            
             {cardType === 'request-join' ? (
-              <>
-                <ApplicantModal nickName={study.nickName} preferredArea={study.preferredArea}/>
-                <AcceptRejectButtons 
-                  studyId={study.studyId} 
-                  memberId={study.memberId}
-                  onAccept={() => {navigate('/me');
-                  }}
-                  onReject={() => {navigate('/me');
-                  }}
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2">
+                <ApplicantModal 
+                  nickName={study.nickName} 
+                  preferredArea={study.preferredArea}
                 />
-              </>
+                <div className="flex gap-2">
+                  <AcceptRejectButtons 
+                    studyId={study.studyId}
+                    memberId={study.memberId}
+                  />
+                </div>
+              </div>
             ) : (
-              <ActionButton state={study.state} studyId={study.studyId} />
+              <div className="w-full sm:w-auto">
+                <ActionButton 
+                  state={study.state} 
+                  studyId={study.studyId} 
+                />
+              </div>
             )}
           </div>
-        </Card.Body>
+        </div>
       </Card>
-      {isClosed && (
-        <div 
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: '15px',
-            zIndex: 10
-          }}
-        >
-          <XCircle size={64} color="white" />
+
+      {/* Closed Overlay */}
+      {study.isClosed && (
+        <div className="absolute inset-0 bg-black/50 flex justify-center items-center rounded-xl">
+          <XCircle className="w-16 h-16 text-white" />
         </div>
       )}
     </div>
