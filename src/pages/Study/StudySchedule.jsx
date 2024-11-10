@@ -2,14 +2,13 @@ import React, { useEffect } from 'react';
 import { Calendar } from 'lucide-react';
 import { Card } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import {Box, Button, Typography} from '@mui/material';
+import {Box, Button, Typography , useMediaQuery , useTheme} from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
-import { set } from 'date-fns';
-
 
 const StudySchedule = ({ studyScheduleDetail, studyId }) => {
-  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
   const [isFinished, setIsFinished] = useState(false);
   const [homeStudyInfoList, setHomeStudyInfoList] = useState([]);
@@ -78,103 +77,103 @@ const StudySchedule = ({ studyScheduleDetail, studyId }) => {
   };
 
   return (
-    <Card className="w-64 bg-gray-100 shadow-md" style={{ border: "solid" }}>     
-      <Card.Header className="bg-gray-200 py-2 d-flex align-items-center">
-          <Calendar className="mr-4" size={20} />
-          <h2 className="text-lg font-semibold mb-0">스터디 일정</h2>
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-            {isFinished ? (
-              <Typography color="error" variant="h4" align="right">
-                마감
-              </Typography>
-            ) : (
-              <Button 
-                variant="contained" 
-                color="error" 
-                onClick={() => handleFinishStudy()}
-              >
-                마감
-              </Button>
-            )}
-          </Box>
-        </Card.Header>
+    <Card className="bg-gray-100 shadow-md">
+      <Card.Header className={`bg-gray-200 py-2 d-flex ${isMobile ? 'flex-column' : 'flex-row'} align-items-center`}>
+        <Calendar className={`${isMobile ? 'mb-2' : 'mr-2'}`} size={20} />
+        <h2 className="text-lg font-semibold mb-0">스터디 일정</h2>
+        <Box sx={{ mt: isMobile ? 1 : 0, display: 'flex', justifyContent: isMobile ? 'center' : 'flex-end', width: '100%' }}>
+          {isFinished ? (
+            <Typography color="error" variant="h4" align="right">
+              마감
+            </Typography>
+          ) : (
+            <Button 
+              variant="contained" 
+              color="error" 
+              onClick={() => handleFinishStudy()}
+            >
+              마감
+            </Button>
+          )}
+      </Box>
+    </Card.Header>
 
-        <Card.Body className="p-4">
-              {/* 요일 선택 섹션 - 웹 버전 */}
-              <div className="hidden md:flex justify-content-between mb-4">
-                {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => (
-                  <div
-                    key={index}
-                    className={`w-8 h-8 d-flex align-items-center justify-content-center 
-                      ${studyScheduleDetail.weekDay.includes(day) 
-                      ? 'rounded-circle bg-primary text-white' : ''}`}
-                  >
-                    {day}
-                  </div>
-                ))}
-              </div>
+      <Card.Body className="p-4">
+      {/* 요일 선택 섹션 - 웹 버전 */}
+      <div className="hidden md:flex justify-content-between mb-4">
+        {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => (
+          <div
+            key={index}
+            className={`w-8 h-8 d-flex align-items-center justify-content-center 
+              ${studyScheduleDetail.weekDay.includes(day) 
+              ? 'rounded-circle bg-primary text-white' : ''}`}
+          >
+            {day}
+          </div>
+        ))}
+      </div>
 
-              {/* 요일 선택 섹션 - 모바일 버전 */}
-              <div className="md:hidden mb-4">
-                <div className="grid grid-cols-7 gap-2">
-                  {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => (
-                    <div
-                      key={index}
-                      className={`aspect-square flex items-center justify-center text-sm
-                        ${studyScheduleDetail.weekDay.includes(day)
-                        ? 'rounded-full bg-primary text-white'
-                        : 'rounded-full border border-gray-200'}`}
-                    >
-                      {day}
-                    </div>
-                  ))}
-                </div>
-              </div>
+      {/* 요일 선택 섹션 - 모바일 버전 */}
+      <div className="md:hidden mb-4">
+        <div className="grid grid-cols-7 gap-2">
+          {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => (
+            <div
+              key={index}
+              className={`aspect-square flex items-center justify-center text-sm
+                ${studyScheduleDetail.weekDay.includes(day)
+                ? 'rounded-full bg-primary text-white'
+                : 'rounded-full border border-gray-200'}`}
+            >
+              {day}
+            </div>
+          ))}
+        </div>
+      </div>
 
-              {/* 스케줄 정보 섹션 - 웹 버전 */}
-              <div className="hidden md:block space-y-2">
-                <div className="d-flex justify-content-between">
-                  <span className="text-primary">시작일</span>
-                  <span>{studyScheduleDetail.startDay}</span>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <span>시간</span>
-                  <span>{studyScheduleDetail.time}</span>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <span>모집 인원</span>
-                  <span>{studyScheduleDetail.nowPeople}/{studyScheduleDetail.recruitPeople}</span>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <span>마감일</span>
-                  <span>{studyScheduleDetail.endDay}</span>
-                </div>
-              </div>
+      {/* 스케줄 정보 섹션 - 웹 버전 */}
+      <div className="hidden md:block space-y-2">
+        <div className="d-flex justify-content-between">
+          <span className="text-primary">시작일</span>
+          <span>{studyScheduleDetail.startDay}</span>
+        </div>
+        <div className="d-flex justify-content-between">
+          <span>시간</span>
+          <span>{studyScheduleDetail.time}</span>
+        </div>
+        <div className="d-flex justify-content-between">
+          <span>모집 인원</span>
+          <span>{studyScheduleDetail.nowPeople}/{studyScheduleDetail.recruitPeople}</span>
+        </div>
+        <div className="d-flex justify-content-between">
+          <span>마감일</span>
+          <span>{studyScheduleDetail.endDay}</span>
+        </div>
+      </div>
 
-              {/* 스케줄 정보 섹션 - 모바일 버전 */}
-              <div className="md:hidden mt-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="text-sm text-primary mb-1">시작일</div>
-                    <div className="font-medium">{studyScheduleDetail.startDay}</div>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="text-sm mb-1">시간</div>
-                    <div className="font-medium">{studyScheduleDetail.time}</div>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="text-sm mb-1">모집 인원</div>
-                    <div className="font-medium">
-                      {studyScheduleDetail.nowPeople}/{studyScheduleDetail.recruitPeople}
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="text-sm mb-1">마감일</div>
-                    <div className="font-medium">{studyScheduleDetail.endDay}</div>
-                  </div>
-                </div>
-              </div>
-            </Card.Body>
+      {/* 스케줄 정보 섹션 - 모바일 버전 */}
+      <div className="md:hidden mt-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-gray-50 rounded-lg">
+            <div className="text-sm text-primary mb-1">시작일</div>
+            <div className="font-medium">{studyScheduleDetail.startDay}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg">
+            <div className="text-sm mb-1">시간</div>
+            <div className="font-medium">{studyScheduleDetail.time}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg">
+            <div className="text-sm mb-1">모집 인원</div>
+            <div className="font-medium">
+              {studyScheduleDetail.nowPeople}/{studyScheduleDetail.recruitPeople}
+            </div>
+          </div>
+          <div className="bg-gray-50 rounded-lg">
+            <div className="text-sm mb-1">마감일</div>
+            <div className="font-medium">{studyScheduleDetail.endDay}</div>
+          </div>
+        </div>
+      </div>
+    </Card.Body>
     </Card>
   );
 };
