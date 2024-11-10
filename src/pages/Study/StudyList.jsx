@@ -22,14 +22,12 @@ const StudyList = () => {
   const studiesPerPage = 8;
 
   useEffect(() => {
-    if (initialStudies.length === 0) {
+    if (initialStudies.length === 0 && allStudies.length === 0) {
       fetchAllStudies();
-      return;
-    }else{
+    } else {
       setAllStudies(initialStudies);
-      return;
     }
-  }, [initialStudies]);
+  }, []);
 
   const fetchAllStudies = async () => {
     try {
@@ -37,6 +35,7 @@ const StudyList = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       setAllStudies(response.data.homeStudyInfoList);
+      return;
     } catch (error) {
       console.error('Error fetching studies:', error);
     }
@@ -65,20 +64,38 @@ const StudyList = () => {
         </CardContent>
       </Card>
       {currentStudies.length > 0 ? (
-        <Grid container spacing={4} className="mt-4">
-          {currentStudies.map((study) => (
-            <Grid item xs={12} md={6} lg={3} key={study.studyId}>
-              <StudyCard study={study} />
-            </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '70vh', width: '100%' }}>
-          <div className="text-center">
-            <img src={noSearchImg} alt="noSearchImg" style={{ width: '300px', height: 'auto', marginBottom: '20px' }} />
-            <Typography variant="h6">No studies found</Typography>
+
+          <div className="mt-4 w-full">
+            {/* Mobile Slider */}
+            <div className="md:hidden w-full overflow-x-auto">
+              <div className="flex gap-4 p-4 w-full snap-x snap-mandatory">
+                {currentStudies.map((study) => (
+                  <div 
+                    key={study.studyId} 
+                    className="flex-none w-[85vw] snap-center"
+                  >
+                    <StudyCard study={study} />
+                  </div>
+                ))}
+              </div>
           </div>
-        </div>
+
+          {/* Desktop/Tablet Grid */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-4">
+                {currentStudies.map((study) => (
+                  <div key={study.studyId}>
+                    <StudyCard study={study} />
+                  </div>
+                ))}
+            </div>
+          </div>
+          ) : (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '70vh', width: '100%' }}>
+              <div className="text-center">
+                <img src={noSearchImg} alt="noSearchImg" style={{ width: '300px', height: 'auto', marginBottom: '20px' }} />
+                <Typography variant="h6">No studies found</Typography>
+              </div>
+            </div>
       )}
       <Grid container justifyContent="center" className="mt-4">
         <MuiPagination

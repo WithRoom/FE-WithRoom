@@ -70,7 +70,6 @@ const Home = () => {
   useEffect(() => {
     checkAuth();
     fetchStudies();
-  
   }, []);
 
   // 인증 상태에 따른 사용자 정보 가져오기
@@ -126,14 +125,14 @@ const Home = () => {
           ))
         ) : (
           <div className="col-span-full">
-            <p>스터디가 없습니다.</p>
+            
           </div>
         )}
         
         {studies.length > 6 && (
           <div>
             <Link to="/study/list">
-              <div className="bg-white rounded-lg p-4 flex flex-col items-center justify-center h-full cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200">
+              <div className="bg-white rounded-lg p-4 flex flex-col items-center justify-center h-full cursor-pointer hover:shadow-lg transition-shadow duration-200">
                 <ChevronRight className="w-12 h-12 text-blue-500 mb-3" />
                 <p className="text-lg font-bold text-center text-gray-800">
                   스터디를 더 보러 가볼까요?
