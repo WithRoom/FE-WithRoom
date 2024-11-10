@@ -272,6 +272,9 @@ const StudyDetail = () => {
       <Header />
       <Box sx={{ my: 3 }}>
         <Grid container spacing={6}>
+          <Grid item xs={12} md={3}>
+            <StudySchedule studyScheduleDetail={studyScheduleDetail} studyId={studyDetail.studyId} />
+          </Grid>
           <Grid item xs={12} md={9}>
             <StyledCard>
               <CardContent>
@@ -395,10 +398,6 @@ const StudyDetail = () => {
                 </Box>
               </CardContent>
             </StyledCard>
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <StudySchedule studyScheduleDetail={studyScheduleDetail} studyId={studyDetail.studyId} />
           </Grid>
         </Grid>
       </Box>
