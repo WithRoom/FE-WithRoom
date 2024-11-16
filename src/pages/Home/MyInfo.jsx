@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import {
-  Send,
-  Loader2,
-  Cube,
-  Plus
-} from 'lucide-react';
+import { 
+  Container, 
+  Grid, 
+  Tabs, 
+  Tab, 
+  Button, 
+  CircularProgress, 
+  Pagination, 
+  Box,
+  useTheme,
+  useMediaQuery,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography
+} from '@mui/material';
+import axios from 'axios';
+import StudyCard from '../Study/StudyCard';
 import { Link } from 'react-router-dom';
+import { FaCubes } from 'react-icons/fa';
+import SendIcon from '@mui/icons-material/Send';
+import MenuIcon from '@mui/icons-material/Menu';
 
-// Constants
+// 상수 정의
 const TABS = {
   CREATED: 'created',
   PARTICIPATING: 'participating',
@@ -43,38 +55,99 @@ const EMPTY_MESSAGES = {
   [TABS.JOIN]: '참여 신청한 스터디가 없습니다.'
 };
 
-// Components
+// 컴포넌트들
 const StudyList = ({ studies, cardType }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <Grid container spacing={2}>
     {studies.map((study) => (
-      <StudyCard key={study.studyId} study={study} cardType={cardType} />
+      <Grid item xs={12} sm={6} md={4} key={study.studyId}>
+        <StudyCard study={study} cardType={cardType} />
+      </Grid>
     ))}
-  </div>
-);
-
-const StudyCard = ({ study, cardType }) => (
-  <Card className="h-full">
-    <CardContent className="p-4">
-      {/* Study card content here */}
-    </CardContent>
-  </Card>
+  </Grid>
 );
 
 const LoadingSpinner = () => (
-  <div className="flex justify-center items-center h-32">
-    <Loader2 className="h-8 w-8 animate-spin" />
-  </div>
+  <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+    <CircularProgress />
+  </Box>
 );
 
 const EmptyState = ({ message }) => (
-  <div className="flex flex-col justify-center items-center h-64 space-y-4">
-    <Cube className="h-16 w-16 text-gray-400" />
-    <p className="text-gray-500">{message}</p>
-  </div>
+  <Box 
+    display="flex" 
+    flexDirection="column" 
+    justifyContent="center" 
+    alignItems="center" 
+    minHeight="300px"
+    p={2}
+  >
+    <FaCubes size={100} color="gray" style={{ marginBottom: '16px' }} />
+    <Typography variant="body1" color="textSecondary" align="center">
+      {message}
+    </Typography>
+  </Box>
 );
 
-// Custom hook
+// 모바일 탭 메뉴 컴포넌트
+const MobileTabMenu = ({ activeTab, handleTabChange }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuItemClick = (value) => {
+    handleTabChange(null, value);
+    handleClose();
+  };
+
+  return (
+    <Box sx={{ mb: 2 }}>
+      <Button
+        fullWidth
+        variant="outlined"
+        onClick={handleClick}
+        endIcon={<MenuIcon />}
+        sx={{ justifyContent: 'space-between' }}
+      >
+        {TAB_LABELS[activeTab]}
+      </Button>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            width: '100%',
+            maxWidth: '300px'
+          }
+        }}
+      >
+        {Object.entries(TAB_LABELS).map(([key, label]) => (
+          <MenuItem
+            key={key}
+            selected={key === activeTab}
+            onClick={() => handleMenuItemClick(key)}
+          >
+            {label}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Box>
+  );
+};
+
+// 커스텀 훅
 const useStudies = (activeTab) => {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_DOMAIN,
+  });
+
   const [studies, setStudies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -83,20 +156,12 @@ const useStudies = (activeTab) => {
     const fetchStudies = async () => {
       setIsLoading(true);
       setError(null);
-      
       try {
         const endpoint = TAB_ENDPOINTS[activeTab];
-        const response = await fetch(process.env.REACT_APP_DOMAIN + endpoint, {
-          headers: { 
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          }
+        const response = await api.get(process.env.REACT_APP_DOMAIN + endpoint, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch studies');
-        }
-
-        const data = await response.json();
         const studyMapping = {
           [TABS.CREATED]: 'groupLeaderStudies',
           [TABS.PARTICIPATING]: 'participationStudies',
@@ -105,10 +170,10 @@ const useStudies = (activeTab) => {
           [TABS.JOIN]: 'signUpStudies'
         };
 
-        setStudies(data[studyMapping[activeTab]] || []);
+        setStudies(response.data[studyMapping[activeTab]] || []);
       } catch (error) {
-        setError(error.message);
-        console.error('Failed to fetch studies:', error);
+        console.error('스터디 목록을 불러오는데 실패했습니다:', error);
+        setError('스터디 목록을 불러오는데 실패했습니다.');
       } finally {
         setIsLoading(false);
       }
@@ -120,85 +185,128 @@ const useStudies = (activeTab) => {
   return { studies, isLoading, error };
 };
 
-// Pagination component
-const Pagination = ({ currentPage, totalPages, onPageChange }) => (
-  <div className="flex justify-center items-center space-x-2 mt-6">
-    {Array.from({ length: totalPages }, (_, i) => (
-      <button
-        key={i + 1}
-        onClick={() => onPageChange(i + 1)}
-        className={`px-3 py-1 rounded ${
-          currentPage === i + 1
-            ? 'bg-blue-500 text-white'
-            : 'bg-gray-200 hover:bg-gray-300'
-        }`}
-      >
-        {i + 1}
-      </button>
-    ))}
-  </div>
-);
-
-// Main component
+// 메인 컴포넌트
 const MyInfo = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [activeTab, setActiveTab] = useState(TABS.CREATED);
   const { studies, isLoading, error } = useStudies(activeTab);
   const [currentPage, setCurrentPage] = useState(1);
-  const studiesPerPage = 6;
+  const studiesPerPage = isMobile ? 4 : 6;
 
   const indexOfLastStudy = currentPage * studiesPerPage;
   const indexOfFirstStudy = indexOfLastStudy - studiesPerPage;
   const currentStudies = studies.slice(indexOfFirstStudy, indexOfLastStudy);
-  const totalPages = Math.ceil(studies.length / studiesPerPage);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    // 페이지 변경 시 상단으로 부드럽게 스크롤
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+    setCurrentPage(1);
   };
 
   const renderContent = () => {
     if (isLoading) return <LoadingSpinner />;
-    if (error) return <div className="text-red-500 text-center">{error}</div>;
+    if (error) return <EmptyState message={error} />;
     if (studies.length === 0) return <EmptyState message={EMPTY_MESSAGES[activeTab]} />;
     return <StudyList studies={currentStudies} cardType={activeTab} />;
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-          <Tabs defaultValue={activeTab} className="w-full sm:w-auto" onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full sm:w-auto">
-              {Object.entries(TAB_LABELS).map(([key, label]) => (
-                <TabsTrigger 
-                  key={key} 
-                  value={key}
-                  className="px-2 py-1 text-sm sm:text-base whitespace-nowrap"
-                >
-                  {label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-          
-          <Link to="/study" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto">
-              <Plus className="mr-2 h-4 w-4" />
+    <Container maxWidth="lg">
+      <Box sx={{ mb: 3 }}>
+        {/* 모바일에서는 드롭다운 메뉴, 데스크톱에서는 탭으로 표시 */}
+        {isMobile ? (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <MobileTabMenu activeTab={activeTab} handleTabChange={handleTabChange} />
+            <Button
+              component={Link}
+              to="/study"
+              variant="contained"
+              fullWidth
+              endIcon={<SendIcon />}
+              sx={{ mb: 2 }}
+            >
               스터디 만들기
             </Button>
-          </Link>
-        </div>
-
-        {renderContent()}
-
-        {studies.length > studiesPerPage && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          </Box>
+        ) : (
+          <Box 
+            display="flex" 
+            justifyContent="space-between" 
+            alignItems="center"
+            sx={{ 
+              flexDirection: { xs: 'column', md: 'row' },
+              gap: { xs: 2, md: 0 }
+            }}
+          >
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                '.MuiTabs-scrollButtons': {
+                  '&.Mui-disabled': {
+                    opacity: 0.3,
+                  },
+                },
+              }}
+            >
+              {Object.entries(TAB_LABELS).map(([key, label]) => (
+                <Tab 
+                  key={key} 
+                  label={label} 
+                  value={key}
+                  sx={{
+                    minWidth: { xs: 'auto', sm: 120 },
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  }}
+                />
+              ))}
+            </Tabs>
+            <Button
+              component={Link}
+              to="/study"
+              variant="contained"
+              endIcon={<SendIcon />}
+              sx={{ minWidth: 140 }}
+            >
+              스터디 만들기
+            </Button>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+
+      {renderContent()}
+
+      {studies.length > studiesPerPage && (
+        <Box 
+          display="flex" 
+          justifyContent="center" 
+          mt={4} 
+          mb={2}
+          sx={{
+            '& .MuiPagination-ul': {
+              justifyContent: 'center',
+            }
+          }}
+        >
+          <Pagination
+            count={Math.ceil(studies.length / studiesPerPage)}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            size={isMobile ? "small" : "medium"}
+            siblingCount={isMobile ? 0 : 1}
+          />
+        </Box>
+      )}
+    </Container>
   );
 };
 
