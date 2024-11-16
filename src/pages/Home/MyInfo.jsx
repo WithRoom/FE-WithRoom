@@ -56,15 +56,43 @@ const EMPTY_MESSAGES = {
 };
 
 // 컴포넌트들
-const StudyList = ({ studies, cardType }) => (
-  <Grid container spacing={2}>
-    {studies.map((study) => (
-      <Grid item xs={12} sm={6} md={4} key={study.studyId}>
-        <StudyCard study={study} cardType={cardType} />
-      </Grid>
-    ))}
-  </Grid>
-);
+const StudyList = ({ studies, cardType }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    variableWidth: true,
+  };
+
+  return isMobile ? (
+    <div className="md:hidden w-full overflow-x-auto">
+      <div className="flex gap-4 p-4 w-full snap-x snap-mandatory">
+        {studies.map((study) => (
+          <div 
+            key={study.studyId} 
+            className="flex-none w-[85vw] snap-center"
+          >
+            <StudyCard study={study} cardType={cardType} />
+          </div>
+        ))}
+     </div>
+    </div>
+  ) : (
+    <Grid container spacing={2}>
+      {studies.map((study) => (
+        <Grid item xs={12} sm={6} md={4} key={study.studyId}>
+          <StudyCard study={study} cardType={cardType} />
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
 
 const LoadingSpinner = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
