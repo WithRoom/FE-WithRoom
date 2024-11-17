@@ -47,8 +47,12 @@ const StudySchedule = ({ studyScheduleDetail, studyId }) => {
   }, [studyScheduleDetail.endDay, studyId]);
 
   const handleFinishStudy = async () => {
+    const api = axios.create({
+      baseURL: process.env.REACT_APP_DOMAIN, 
+    });
+
     try {
-      const response = await axios.post('/study/finish', { studyId }, {
+      const response = await api.post('/study/finish', { studyId }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
       });
 
